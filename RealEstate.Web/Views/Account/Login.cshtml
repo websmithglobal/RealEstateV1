@@ -1,0 +1,111 @@
+﻿@model RealEstate.Application.DTOs.LoginDTO
+
+@{
+    ViewBag.Title = "User Login";
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<!-- Mirrored from griya-html.vercel.app/page-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 31 Oct 2025 13:07:09 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  	   <!-- Title -->
+    <title>Real Estate - User Login</title>
+
+	<!-- Meta -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="author" content="DexignZone">
+	<meta name="robots" content="">
+
+	<meta name="keywords" content="admin dashboard, admin template, administration, analytics, bootstrap, broker, medical dashboard, modern, property, property admin, real estate, responsive admin dashboard">
+	<meta name="description" content="Griya is a premier real estate development that offers a range of high-quality residential properties designed to meet the diverse needs and preferences of buyers. With its commitment to excellence and attention to detail, Griya has established itself as a trusted brand in the real estate industry.">
+
+	<meta property="og:title" content="Griya - Real Estate Admin & Dashboard Bootstrap 5 Template">
+	<meta property="og:description" content="Griya is a premier real estate development that offers a range of high-quality residential properties designed to meet the diverse needs and preferences of buyers. With its commitment to excellence and attention to detail, Griya has established itself as a trusted brand in the real estate industry.">
+	<meta property="og:image" content="../griya.dexignzone.com/xhtml/social-image.html">
+	<meta name="format-detection" content="telephone=no">
+
+	<!-- Mobile Specific -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Favicon icon -->
+	<link rel="icon" type="image/png" href="images/favicon.png">
+
+	<link href="vendor/jquery-nice-select/css/nice-select.css" rel="stylesheet">
+      <link href="css/style.css" rel="stylesheet">
+
+</head>
+
+<body class="vh-100">
+    <div class="authincation h-100">
+        <div class="container h-100">
+            <div class="row justify-content-center h-100 align-items-center">
+                <div class="col-md-6">
+                    <div class="authincation-content">
+                        <div class="row no-gutters">
+                            <div class="col-xl-12">
+                                <div class="auth-form">
+									<div class="text-center mb-3">
+										<a href="#"><img  class="logo-light" src="images/logo-full.png" alt=""></a>
+										<a href="#"><img  class="logo-dark" src="images/logo-white-full.png" alt=""></a>
+									</div>
+                                    <h4 class="text-center mb-4">Sign in your account</h4>
+                                    <form asp-action="Login" asp-controller="Account" method="post">
+                                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                                        <div class="mb-3">
+                                            <label class="mb-1"><strong>Email</strong></label>
+                                            <input type="email" class="form-control" value="" placeholder="Enter email">
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+										<div class="mb-3 position-relative">
+                                            <label class="mb-1"><strong>Password</strong></label>
+											<input type="password" id="dz-password" class="form-control" value="" placeholder="Enter Password">
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+											<span class="show-pass eye">
+											
+												<i class="fa fa-eye-slash"></i>
+												<i class="fa fa-eye"></i>
+											
+											</span>
+                                        </div>
+                                        <div class="row d-flex justify-content-between mt-4 mb-2">
+                                            <div class="mb-3">
+                                               <div class="form-check custom-checkbox ms-1">
+													<input type="checkbox" class="form-check-input" id="basic_checkbox_1">
+													<label class="form-check-label" for="basic_checkbox_1">Remember my preference</label>
+												</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <a href="page-forgot-password.html">Forgot Password?</a>
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary btn-block">Sign Me In</button>
+                                        </div>
+                                    </form>
+                                    <div class="new-account mt-3">
+                                        <p>Don't have an account? <a class="text-primary" href="page-register.html">Sign up</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Required vendors -->
+    <script src="@Url.Content("~/vendor/global/global.min.js")"></script>
+    <script src="@Url.Content("~/js/themejs/custom.min.js")"></script>
+    <script src="@Url.Content("~/vendor/jquery-nice-select/js/jquery.nice-select.min.js")"></script>
+    <script src="@Url.Content("~/js/themejs/deznav-init.js")"></script>
+    <script src="@Url.Content("~/js/themejs/demo.js")"></script>
+    <script src="@Url.Content("~/js/themejs/styleSwitcher.js")"></script>
+    <partial name="_ValidationScriptsPartial" />
+</body>
+
+</html>

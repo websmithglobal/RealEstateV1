@@ -44,9 +44,7 @@ using (var scope = app.Services.CreateScope())
 // MVC Routing
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-// Razor Pages Routing (Required for Identity)
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 app.MapRazorPages();
 
 app.Run();

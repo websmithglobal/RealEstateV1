@@ -19,4 +19,8 @@
     <Folder Include="wwwroot\Scripts\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RealEstate.Application\RealEstate.Application.csproj" />
+  </ItemGroup>
+
 </Project>

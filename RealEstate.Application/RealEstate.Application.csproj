@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
     <Folder Include="Interface\" />
-    <Folder Include="DTOs\" />
     <Folder Include="Interface\" />
+    <Folder Include="Interface\" />
+    <Folder Include="Services\" />
     <Folder Include="Services\" />
     <Folder Include="Services\" />
   </ItemGroup>

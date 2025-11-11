@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RealEstate.Application.Interface;
+using RealEstate.Application.Services;
 using RealEstate.Core.Identity;
 using RealEstate.Core.Persistence.DbContext;
 
@@ -20,6 +22,9 @@ namespace RealEstate.Infrastructure.Extensions
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            //resolve dependencies
+            services.AddScoped<IEmailSender, EmailSender>();
 
             return services;
         }

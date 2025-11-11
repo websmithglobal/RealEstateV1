@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Email\ForgotPassword.html" />
+    <Content Remove="wwwroot\Email\SendLoginOTP.html" />
+    <Content Remove="wwwroot\Email\UserCredentials.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.19" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.19" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.19" />
@@ -25,12 +31,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Email\ForgotPassword.html" />
+    <None Include="wwwroot\Email\SendLoginOTP.html" />
+    <None Include="wwwroot\Email\UserCredentials.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RealEstate.Application\RealEstate.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RealEstate.Application\RealEstate.Application.csproj" />
     <ProjectReference Include="..\RealEstate.Infrastructure\RealEstate.Infrastructure.csproj" />
+    <ProjectReference Include="..\RealEstate.Utilities\RealEstate.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

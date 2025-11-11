@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.DTOs;
+using RealEstate.Application.Interface;
 using RealEstate.Core.Identity;
-using System.Security.Claims;
 
 namespace RealEstate.Web.Controllers
 {
@@ -16,14 +16,30 @@ namespace RealEstate.Web.Controllers
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<ApplicationUser> userManager,
-                                 SignInManager<ApplicationUser> signInManager,
-                                 ILogger<AccountController> logger)
+        #endregion Variable
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
+        /// <param name="userManager">The user manager for managing user accounts.</param>
+        /// <param name="signInManager">The sign-in manager for handling user logins and logouts.</param>
+        /// <param name="logger">The logger for logging information and errors.</param>
+        public AccountController(UserManager<ApplicationUser> userManager
+            , SignInManager<ApplicationUser> signInManager
+            , ILogger<AccountController> logger,
+                IWebHostEnvironment webHostEnvironment,
+                IEmailSender emailSender)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _webHostEnvironment = webHostEnvironment;
+            _emailSender = emailSender;
         }
 
 
@@ -93,11 +109,6 @@ namespace RealEstate.Web.Controllers
                 // Log to custom error reporting system if ERRORREPORTING is available
                 string controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
                 string actionName = ControllerContext.RouteData.Values["action"]?.ToString();
-                Guid UpdatedBy = Guid.Empty; // Default if user is not authenticated yet
-                if (User.Identity.IsAuthenticated)
-                {
-                    Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out UpdatedBy);
-                }
 
                 ModelState.AddModelError(string.Empty, "An unexpected error occurred during login. Please try again.");
             }
@@ -105,6 +116,168 @@ namespace RealEstate.Web.Controllers
         }
 
         #endregion Login
+
+        #region ForgotPassword
+
+        /// <summary>
+        /// GET: Displays the Forgot Password form.
+        /// </summary>
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View(new ForgotPasswordDTO());
+        }
+
+        /// <summary>
+        /// POST: Sends a password-reset email to the admin user.
+        /// </summary>
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Account not found.";
+                return View(model);
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var callbackUrl = Url.Action(
+                "ResetPassword",
+                "Account",
+                new { userId = user.Id, token = token },
+                protocol: HttpContext.Request.Scheme);
+
+            string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "email", "ForgotPassword.html");
+            string template = System.IO.File.ReadAllText(filePath);
+
+            string username = model.Email.Split('@')[0];
+
+            string emailBody = template
+                .Replace("{username}", username)
+                .Replace("{callbackUrl}", callbackUrl);
+
+            await _emailSender.SendEmailAsync(model.Email, "Reset Your Password", emailBody);
+
+            TempData["SuccessMessage"] = "Password reset link has been sent.";
+            return RedirectToAction("ForgotPassword");
+        }
+
+        #endregion ForgotPassword
+
+        #region ResetPassword
+
+        /// <summary>
+        /// GET: Shows the reset password page with token.
+        /// </summary>
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+                return BadRequest("Invalid reset request.");
+
+            return View(new ResetPasswordDTO
+            {
+                UserId = userId,
+                Token = token
+            });
+        }
+
+        /// <summary>
+        /// POST: Resets the admin user's password using the provided token.
+        /// </summary>
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return View(model);
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
+
+                TempData["ErrorMessage"] = "Unable to reset password.";
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] = "Password reset successfully.";
+            return RedirectToAction("Login");
+        }
+
+        #endregion ResetPassword
+
+        #region ChangePassword
+
+        /// <summary>
+        /// GET: Shows the Change Password page for logged-in admin.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View(new ChangePasswordDTO());
+        }
+
+        /// <summary>
+        /// POST: Changes the password for the logged-in admin.
+        /// </summary>
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return View(model);
+            }
+
+            var result = await _userManager.ChangePasswordAsync(
+                user,
+                model.CurrentPassword,
+                model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
+
+                TempData["ErrorMessage"] = "Unable to change password.";
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] = "Password updated successfully.";
+            return RedirectToAction("ChangePassword");
+        }
+
+        #endregion ChangePassword
 
         #region Logout
 

@@ -49,9 +49,27 @@
                             <div class="col-xl-12">
                                 <div class="auth-form">
 									<div class="text-center mb-3">
-										<a href="#"><img  class="logo-light" src="images/logo-full.png" alt=""></a>
-										<a href="#"><img  class="logo-dark" src="images/logo-white-full.png" alt=""></a>
+										<h1>Real Estate</h1>
 									</div>
+
+                                    <!-- TEMP DATA MESSAGE DISPLAY -->
+                                    @if (TempData["SuccessMessage"] != null)
+                                    {
+                                        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                                            <strong>Success!</strong> @TempData["SuccessMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    }
+
+                                    @if (TempData["ErrorMessage"] != null)
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                                            <strong>Error!</strong> @TempData["ErrorMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    }
+                                    <!-- END TEMP DATA -->
+
                                     <h4 class="text-center mb-4">Sign in your account</h4>
                                     <form asp-action="Login" asp-controller="Account" method="post">
                                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
@@ -80,7 +98,7 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3">
-                                                <a href="page-forgot-password.html">Forgot Password?</a>
+                                                <a asp-controller="Account" asp-action="ForgotPassword">Forgot Password?</a>
                                             </div>
                                         </div>
 
@@ -88,10 +106,6 @@
                                             <button type="submit" class="btn btn-primary btn-block">Sign Me In</button>
                                         </div>
                                     </form>
-
-                                    <div class="new-account mt-3">
-                                        <p>Don't have an account? <a class="text-primary" href="page-register.html">Sign up</a></p>
-                                    </div>
 
                                 </div>
                             </div>

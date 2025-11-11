@@ -2,6 +2,14 @@
 // base URL
 window.baseURL = '@Url.Content("~/")';
 
+function showLoader() {
+    document.getElementById("loader").style.display = "flex";
+}
+
+function hideLoader() {
+    document.getElementById("loader").style.display = "none";
+}
+
 // Global Toaster Method
 window.showToast = function (message, type = 'info') {
     // Define toast types and their corresponding titles

@@ -30,6 +30,16 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+app.Use(async (context, next) =>
+{
+    await next();
+
+    // Prevent browser caching of authenticated pages
+    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+    context.Response.Headers["Pragma"] = "no-cache";
+    context.Response.Headers["Expires"] = "0";
+});
+
 app.UseAuthorization();
 
 // SEED DEFAULT ROLES + ADMIN USER

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.DTOs;
+using RealEstate.Core.Identity;
 using System.Security.Claims;
 
 namespace RealEstate.Web.Controllers
@@ -13,27 +14,18 @@ namespace RealEstate.Web.Controllers
         // Changed to private readonly as per best practices for injected dependencies
         private readonly ILogger<AccountController> _logger;
 
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        #endregion Variable
-
-        #region Constructor
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AccountController"/> class.
-        /// </summary>
-        /// <param name="userManager">The user manager for managing user accounts.</param>
-        /// <param name="signInManager">The sign-in manager for handling user logins and logouts.</param>
-        /// <param name="logger">The logger for logging information and errors.</param>
-        public AccountController(UserManager<IdentityUser> userManager
-            , SignInManager<IdentityUser> signInManager
-            , ILogger<AccountController> logger)
+        public AccountController(UserManager<ApplicationUser> userManager,
+                                 SignInManager<ApplicationUser> signInManager,
+                                 ILogger<AccountController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
 
         #endregion Constructor
 

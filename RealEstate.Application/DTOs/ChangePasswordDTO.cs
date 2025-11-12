@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RealEstate.Application.DTOs
 {
+    /// <summary>
+    /// Represents a data transfer object for changing user password.
+    /// Created By - Nirmal
+    /// Created Date - 12.11.2025
+    /// </summary>
     public class ChangePasswordDTO
     {
         [Required(ErrorMessage = "Current password is required.")]

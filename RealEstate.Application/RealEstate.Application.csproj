@@ -7,16 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interface\" />
-    <Folder Include="Interface\" />
-    <Folder Include="Interface\" />
-    <Folder Include="Services\" />
-    <Folder Include="Services\" />
-    <Folder Include="Services\" />
+    <PackageReference Include="AutoMapper" Version="15.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RealEstate.Core\RealEstate.Core.csproj" />
+    <ProjectReference Include="..\RealEstate.Utilities\RealEstate.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,11 @@
 
 namespace RealEstate.Application.DTOs
 {
+    /// <summary>
+    /// Represents a data transfer object for user login credentials and options.
+    /// Created By - Nirmal
+    /// Created Date - 12.11.2025
+    /// </summary>
     public class LoginDTO
     {
         [Required]
@@ -16,6 +21,5 @@ namespace RealEstate.Application.DTOs
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
-
     }
 }

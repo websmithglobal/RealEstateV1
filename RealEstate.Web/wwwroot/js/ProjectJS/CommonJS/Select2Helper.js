@@ -1,13 +1,14 @@
-﻿function Select2Helper(ControlName, type = null) {
-    const $element = $('.select2-modal');
+﻿function Select2Helper(modalId, type = null) {
+    // Initialize Select2 inside the modal
+    $('#' + modalId + ' .select2-modal').each(function () {
+        $(this).select2({
+            dropdownParent: $('#' + modalId),
+            width: '100%'
+        });
 
-    $element.select2({
-        dropdownParent: $('#' + ControlName),
-        width: '100%'
+        // Optional: custom styling (e.g., increased dropdown height)
+        //if (type === 1) {
+        //    $(this).next('.select2-container').css('min-height', '45px');
+        //}
     });
-
-    // Add height only if 'type' is provided and equals 1
-    if (type === 1) {
-        $element.next('.select2-container').css('height','200%');
-    }
 }

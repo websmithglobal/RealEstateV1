@@ -1,0 +1,97 @@
+﻿@model List<SelectListItem>
+@{
+    ViewData["Title"] = "Users";
+}
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5 class="card-title">@ViewData["Title"] Management</h5>
+            </div>
+            <div class="col-auto">
+                <button onclick="OpenModal('add')" class="btn btn-primary">Add New User</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="dataTbl" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile Number</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">Add New User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="Id" />
+                <div class="basic-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Role</label>
+                            <select id="role" class="select2-modal form-control">
+                                <option value="">Select Role</option>
+                                @foreach (var r in Model)
+                                {
+                                    <option value="@r.Value">@r.Text</option>
+                                }
+                            </select>
+                            <span id="roleError" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Full Name</label>
+                            <input type="text" id="fullName" class="form-control" placeholder="Enter Full Name" maxlength="200" />
+                            <span id="fullNameError" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Email</label>
+                            <input type="email" id="email" class="form-control" placeholder="Enter Email" />
+                            <span id="emailError" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Mobile Number</label>
+                            <input type="text" id="mobileNumber" class="form-control" placeholder="Enter Mobile Number" maxlength="15" onkeypress="allowNumeric(event,false)" />
+                            <span id="mobileNumberError" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row" id="passwordFields">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Password</label>
+                            <input type="password" id="password" class="form-control" placeholder="Enter Password" />
+                            <span id="passwordError" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Confirm Password</label>
+                            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" />
+                            <span id="confirmPasswordError" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="BtnSaveUser" onclick="Save()" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/projectjs/register.js" asp-append-version="true"></script>
+}

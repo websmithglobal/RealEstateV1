@@ -16,7 +16,6 @@ namespace RealEstate.Web.Controllers
     public class AccountController : BaseController
     {
         #region Variable
-        // Changed to private readonly as per best practices for injected dependencies
         private readonly ILogger<AccountController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -99,9 +98,8 @@ namespace RealEstate.Web.Controllers
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
-                    // Show error directly on login page
                     ModelState.AddModelError(string.Empty, "Your account has been locked. You cannot login.");
-                    return View(model); // Return the login page with the error
+                    return View(model);
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
@@ -318,7 +316,6 @@ namespace RealEstate.Web.Controllers
         private List<SelectListItem> GetAssignableRoles(IList<string> userRoles)
         {
             var roles = new List<SelectListItem>();
-            // Normalize roles to uppercase for comparison
             var normalizedRoles = userRoles.Select(r => r.ToUpper()).ToList();
             if (normalizedRoles.Contains("SUPERADMIN") || normalizedRoles.Contains("ADMIN"))
             {

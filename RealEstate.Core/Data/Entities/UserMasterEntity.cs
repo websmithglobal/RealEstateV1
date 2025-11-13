@@ -18,5 +18,6 @@ namespace RealEstate.Infrastructure.Data.Entities
         public DateTime? CreatedDate { get; set; }
         public Guid? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

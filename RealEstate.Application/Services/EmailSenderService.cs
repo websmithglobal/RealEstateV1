@@ -12,9 +12,11 @@ namespace RealEstate.Application.Services
     /// </summary>
     public class EmailSender : IEmailSender
     {
+        #region Variables
         private readonly IConfiguration _config;
-        //private readonly IMapper _mapper;
+        #endregion
 
+        #region Constructor
         /// <summary>
         /// Initializes a new instance of the EmailSender with the provided configuration.
         /// Created By - Nirmal
@@ -24,9 +26,10 @@ namespace RealEstate.Application.Services
         public EmailSender(IConfiguration config)
         {
             _config = config;
-            //_mapper = mapper;
         }
+        #endregion
 
+        #region Public Methods
         /// <summary>
         /// Sends an email asynchronously to the specified recipient with the given subject and body using SMTP.
         /// Created By - Nirmal
@@ -59,5 +62,6 @@ namespace RealEstate.Application.Services
             message.To.Add(email);
             await smtpClient.SendMailAsync(message);
         }
+        #endregion
     }
 }

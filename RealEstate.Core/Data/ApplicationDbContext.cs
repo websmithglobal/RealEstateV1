@@ -45,6 +45,8 @@ namespace RealEstate.Core.Data
                       .HasDefaultValue(true);
                 entity.Property(e => e.CreatedDate)
                       .HasDefaultValueSql("NOW()");
+                entity.Property(e => e.IsDelete)
+                      .HasDefaultValue(false);
             });
         }
     }

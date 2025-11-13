@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
     GetDataWithPaging();
     $('#userModal').on('shown.bs.modal', function () {
         Select2Helper('userModal');
@@ -10,91 +11,153 @@ function OpenModal(type) {
     if (type === 'add') {
         $("#userModalLabel").text("Add New User");
         $("#BtnSaveUser").text("Save");
-        $("#passwordFields").show(); // Show password fields for add mode
+        $("#passwordFields").show();
     }
     $("#userModal").modal("show");
 }
 
 function validate() {
     // Clear previous errors
-    $("#fullNameError, #emailError, #mobileNumberError, #roleError, #passwordError, #confirmPasswordError").text("");
+    $("#FullNameError, #EmailError, #PhoneNumberError, #RoleError, #PasswordError, #ConfirmPasswordError").text("");
     const userIDP = $("#Id").val() || 0;
-    const fullName = $("#fullName").val().trim();
-    const email = $("#email").val().trim();
-    const mobileNumber = $("#mobileNumber").val().trim();
-    const role = $("#role").val();
-    const password = $("#password").val().trim();
-    const confirmPassword = $("#confirmPassword").val().trim();
+    const fullName = $("#FullName").val().trim();
+    const email = $("#Email").val().trim();
+    const mobileNumber = $("#PhoneNumber").val().trim();
+    const role = $("#Role").val();
+    const password = $("#Password").val().trim();
+    const confirmPassword = $("#ConfirmPassword").val().trim();
     let isValid = true;
     let firstInvalidField = null;
     if (!role) {
-        $("#roleError").text("Please select a Role.");
+        $("#RoleError").text("Please select a Role.");
         isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#role";
+        if (!firstInvalidField) firstInvalidField = "#Role";
         // Move error message after the visible select2 container
-        const select2Container = $("#role").next(".select2-container");
+        const select2Container = $("#Role").next(".select2-container");
         if (select2Container.length > 0) {
-            $("#roleError").insertAfter(select2Container);
+            $("#RoleError").insertAfter(select2Container);
         }
     }
+
     // Validate Full Name
     if (!fullName) {
-        $("#fullNameError").text("Please enter Full Name.");
+        $("#FullNameError").text("Please enter Full Name.");
         isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#fullName";
-    } else if (fullName.length > 200) {
-        $("#fullNameError").text("Full name cannot exceed 200 characters.");
-        isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#fullName";
-    } else if (/[@#$%]/.test(fullName)) {
-        $("#fullNameError").text("Full name cannot contain @, #, $, or % characters.");
-        isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#fullName";
+        if (!firstInvalidField) firstInvalidField = "#FullName";
     }
+    else if (!/^[A-Za-z\s]+$/.test(fullName)) {
+        $("#FullNameError").text("Full name can contain only alphabets and spaces.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#FullName";
+    }
+    else if (fullName.length < 5) {
+        $("#FullNameError").text("Full name must be at least 5 characters long.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#FullName";
+    }
+    else if (fullName.length > 200) {
+        $("#FullNameError").text("Full name cannot exceed 200 characters.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#FullName";
+    }
+    else {
+        $("#FullNameError").text("");
+    }
+
     // Validate Email
     if (!email) {
-        $("#emailError").text("Please enter Email.");
+        $("#EmailError").text("Please enter Email.");
         isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#email";
-    } else if (!emailRegex.test(email)) {
-        $("#emailError").text("Please enter a valid email address.");
-        isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#email";
+        if (!firstInvalidField) firstInvalidField = "#Email";
     }
+    else if (email.length < 5) {
+        $("#EmailError").text("Email must be at least 5 characters long.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#Email";
+    }
+    else if (email.length > 200) {
+        $("#EmailError").text("Email cannot exceed 200 characters.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#Email";
+    }
+    else if (!emailRegex.test(email)) {
+        $("#EmailError").text("Please enter a valid email address.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#Email";
+    }
+    else {
+        $("#EmailError").text("");
+    }
+
     // Validate Mobile Number
     if (!mobileNumber) {
-        $("#mobileNumberError").text("Please enter Mobile Number.");
+        $("#PhoneNumberError").text("Please enter phone Number.");
         isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#mobileNumber";
-    } else if (!mobileNumberRegex.test(mobileNumber)) {
-        $("#mobileNumberError").text("Please enter a valid mobile number.");
-        isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#mobileNumber";
-    } else if (mobileNumber.length > 15) {
-        $("#mobileNumberError").text("Mobile number cannot exceed 15 characters.");
-        isValid = false;
-        if (!firstInvalidField) firstInvalidField = "#mobileNumber";
+        if (!firstInvalidField) firstInvalidField = "#PhoneNumber";
     }
+    else if (!mobileNumberRegex.test(mobileNumber)) {
+        $("#PhoneNumberError").text("Please enter a valid phone number.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#PhoneNumber";
+    }
+    else if (mobileNumber.length < 5) {
+        $("#PhoneNumberError").text("Phone number must be at least 5 digits long.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#PhoneNumber";
+    }
+    else if (mobileNumber.length > 15) {
+        $("#PhoneNumberError").text("Phone number cannot exceed 15 digits.");
+        isValid = false;
+        if (!firstInvalidField) firstInvalidField = "#PhoneNumber";
+    }
+    else {
+        $("#PhoneNumberError").text("");
+    }
+
     if (userIDP == 0) {
+        // Validate Password
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,20}$/;
+
         if (!password) {
-            $("#passwordError").text("Please enter Password.");
+            $("#PasswordError").text("Please enter Password.");
             isValid = false;
-            if (!firstInvalidField) firstInvalidField = "#password";
-        } else if (password.length < 6) {
-            $("#passwordError").text("Password must be at least 6 characters long.");
-            isValid = false;
-            if (!firstInvalidField) firstInvalidField = "#password";
+            if (!firstInvalidField) firstInvalidField = "#Password";
         }
+        else if (password.length < 6) {
+            $("#PasswordError").text("Password must be at least 6 characters long.");
+            isValid = false;
+            if (!firstInvalidField) firstInvalidField = "#Password";
+        }
+        else if (password.length > 20) {
+            $("#PasswordError").text("Password cannot exceed 20 characters.");
+            isValid = false;
+            if (!firstInvalidField) firstInvalidField = "#Password";
+        }
+        else if (!passwordRegex.test(password)) {
+            $("#PasswordError").text("Password must contain at least one lowercase, one uppercase, one digit, and one special character.");
+            isValid = false;
+            if (!firstInvalidField) firstInvalidField = "#Password";
+        }
+        else {
+            $("#PasswordError").text("");
+        }
+
+        // Validate Confirm Password
         if (!confirmPassword) {
-            $("#confirmPasswordError").text("Please enter confirm Password.");
+            $("#ConfirmPasswordError").text("Please enter confirm Password.");
             isValid = false;
-            if (!firstInvalidField) firstInvalidField = "#confirmPassword";
-        } else if (password !== confirmPassword) {
-            $("#confirmPasswordError").text("Passwords do not match!");
+            if (!firstInvalidField) firstInvalidField = "#ConfirmPassword";
+        }
+        else if (password !== confirmPassword) {
+            $("#ConfirmPasswordError").text("Passwords do not match!");
             isValid = false;
-            if (!firstInvalidField) firstInvalidField = "#confirmPassword";
+            if (!firstInvalidField) firstInvalidField = "#ConfirmPassword";
+        }
+        else {
+            $("#ConfirmPasswordError").text("");
         }
     }
+
     // Focus on the first invalid field if any
     if (firstInvalidField) {
         $(firstInvalidField).focus();
@@ -106,10 +169,10 @@ function Save() {
     const isValid = validate();
     if (!isValid) return;
 
-    const fullName = $("#fullName").val().trim();
-    const email = $("#email").val().trim();
-    const mobileNumber = $("#mobileNumber").val().trim();
-    const role = $("#role").val();
+    const fullName = $("#FullName").val().trim();
+    const email = $("#Email").val().trim();
+    const mobileNumber = $("#PhoneNumber").val().trim();
+    const role = $("#Role").val();
     const userIDP = $("#Id").val() || 0;
 
     const model = {
@@ -120,35 +183,44 @@ function Save() {
         Role: role
     };
 
-    // Only include password fields for new user
     if (userIDP == 0) {
-        model.Password = $("#password").val();
-        model.ConfirmPassword = $("#confirmPassword").val();
+        model.Password = $("#Password").val();
+        model.ConfirmPassword = $("#ConfirmPassword").val();
     }
 
     $.ajax({
-        url: baseURL + "/Register/Save",
+        url: baseURL + "Register/Save",
         type: "POST",
         data: model,
         success: function (res) {
-            if (res.code === 1) {
-                // Success
-                showToast(res.message || "User saved successfully.", "success");
-                $("#userModal").modal("hide");
-                GetDataWithPaging();
-                ClearData();
+            $(".text-danger").text("");
+
+            if (res.outval === 0 && res.fieldErrors) {
+                for (const [key, message] of Object.entries(res.fieldErrors)) {
+                    const spanId = `#${key}Error`;
+                    $(spanId).text(message);
+                }
+                showToast(res.outmsg || "Please correct the highlighted errors.", "warning");
+                return;
             }
-            else if (res.code === 99) {
-                // Warning: duplicate email or phone
-                showToast(res.message || "Email or phone number already exists.", "warning");
-            }
-            else {
-                // Error
-                showToast(res.message || "User save failed.", "error");
+
+            switch (res.outval) {
+                case 1:
+                    showToast(res.outmsg || "User saved successfully.", "success");
+                    $("#userModal").modal("hide");
+                    GetDataWithPaging();
+                    ClearData();
+                    break;
+                case 99:
+                    showToast(res.outmsg || "Email or phone number already exists.", "warning");
+                    break;
+                default:
+                    showToast(res.outmsg || "User save failed.", "error");
+                    break;
             }
         },
         error: function (xhr) {
-            const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : "An error occurred.";
+            const errorMsg = xhr.responseJSON ? xhr.responseJSON.Outmsg || xhr.responseJSON.message : "An error occurred.";
             showToast(errorMsg, "error");
         }
     });
@@ -156,18 +228,17 @@ function Save() {
 
 function edit(id) {
     $.ajax({
-        url: baseURL + '/Register/GetByID',
+        url: baseURL + 'Register/GetByID',
         type: 'POST',
         data: { id: id },
         success: function (res) {
             if (res.success && res.data) {
                 const data = res.data; // already a JSON object
                 $("#Id").val(data.userIDP);
-                $("#fullName").val(data.fullName);
-                $("#email").val(data.email);
-                $("#mobileNumber").val(data.phoneNumber);
-                // Fixed: Use roleId (or equivalent value field) instead of roleName to match <option value>
-                $("#role").val(data.roleName).trigger('change'); // Assuming backend returns 'roleId' as the value; adjust if named differently (e.g., 'role')
+                $("#FullName").val(data.fullName);
+                $("#Email").val(data.email);
+                $("#PhoneNumber").val(data.phoneNumber);
+                $("#Role").val(data.roleName).trigger('change');
                 $("#userModalLabel").text("Edit User");
                 $("#BtnSaveUser").text("Update");
                 // Hide password fields in edit mode
@@ -188,9 +259,8 @@ function GetDataWithPaging() {
         $('#dataTbl').DataTable({
             "processing": true,
             "serverSide": true,
+            "ordering": false,
             "autoWidth": false,
-
-            // 👇 CUSTOM PAGINATION ARROWS
             "language": {
                 "paginate": {
                     "previous": "<i class='bi bi-chevron-left'></i>",
@@ -249,7 +319,6 @@ function GetDataWithPaging() {
     }
 }
 
-
 function GeneralAction(id, actionType) {
     let title = 'Are you sure?';
     let text = actionType === 1
@@ -266,7 +335,7 @@ function GeneralAction(id, actionType) {
         if (result.isConfirmed) {
             $.ajax({
                 type: "POST",
-                url: baseURL + "/Register/GeneralAction",
+                url: baseURL + "Register/GeneralAction",
                 data: { ID: id, ActionType: actionType }, // Note: keys match C# method parameters
                 success: function (mRes) {
                     showToast(mRes.message || "Action completed successfully.", mRes.success ? "success" : "error");
@@ -283,11 +352,11 @@ function GeneralAction(id, actionType) {
 
 function ClearData() {
     $("#Id").val('');
-    $("#fullName").val('');
-    $("#email").val('');
-    $("#mobileNumber").val('');
-    $("#role").val('').trigger('change'); // Added trigger('change') for select2 to properly reset
-    $("#password").val('');
-    $("#confirmPassword").val('');
-    $("#fullNameError, #emailError, #mobileNumberError, #roleError, #passwordError, #confirmPasswordError").text('');
+    $("#FullName").val('');
+    $("#Email").val('');
+    $("#PhoneNumber").val('');
+    $("#Role").val('').trigger('change'); 
+    $("#Password").val('');
+    $("#ConfirmPassword").val('');
+    $("#FullNameError, #EmailError, #PhoneNumberError, #RoleError, #PasswordError, #ConfirmPasswordError").text('');
 }

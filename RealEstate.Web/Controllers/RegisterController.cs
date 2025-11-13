@@ -3,6 +3,7 @@ using RealEstate.Application.DTOs;
 using RealEstate.Application.DTOs.CommonDTOs;
 using RealEstate.Application.Interface;
 using RealEstate.Utilities.Constants;
+using SQLHelper;
 
 namespace RealEstate.Web.Controllers
 {
@@ -33,7 +34,7 @@ namespace RealEstate.Web.Controllers
         }
         #endregion
 
-        #region Save 
+        #region Save
         /// <summary>
         /// Saves or updates a user. If UserIDP = 0, a new record is inserted, otherwise updated.
         /// Created By - Nirmal
@@ -46,38 +47,61 @@ namespace RealEstate.Web.Controllers
         {
             try
             {
+                if (dto.UserIDP != 0)
+                {
+                    ModelState.Remove(nameof(dto.Password));
+                    ModelState.Remove(nameof(dto.ConfirmPassword));
+                }
+
+                // Model validation
                 if (!ModelState.IsValid)
                 {
+                    var fieldErrors = ModelState
+                        .Where(x => x.Value?.Errors.Count > 0)
+                        .ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.Errors.First().ErrorMessage
+                        );
+
                     return new JsonResult(new
                     {
-                        success = false,
-                        message = "Invalid input data."
+                        Outval = 0,
+                        Outmsg = "Please correct the highlighted errors.",
+                        FieldErrors = fieldErrors
                     });
                 }
 
                 dto.UserIDF = GetCurrentUserId;
-
                 var result = await _userMaster.SaveAsync(dto);
 
-                bool success = result.Outval != null && result.Outval.ToString() == "1";
+                if (result.Outval.ToString() == "99")
+                {
+                    if (result.Outmsg.Contains("Email"))
+                        result.Outmsg = OperationMessages.EmailExists;
+                    else if (result.Outmsg.Contains("Mobile"))
+                        result.Outmsg = OperationMessages.MobileExists;
+                }
 
                 return new JsonResult(new
                 {
-                    success = success,
-                    message = result.Outmsg,
-                    code = result.Outval // optional: return 1, 0, 99 for frontend logic
+                    Outval = result.Outval,
+                    Outmsg = result.Outmsg
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in Register/Save");
+                string controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
+                string actionName = ControllerContext.RouteData.Values["action"]?.ToString();
+                ERRORREPORTING.ErrorLog(ex, $"{controllerName}/{actionName}", "Nirmal Nanera", GetCurrentUserId);
+
                 return new JsonResult(new
                 {
-                    success = false,
-                    message = $"Error while saving user: {ex.Message}"
+                    Outval = 0,
+                    Outmsg = OperationMessages.Error + ex.Message
                 });
             }
         }
+
         #endregion Save
 
         #region Get By ID
@@ -98,7 +122,10 @@ namespace RealEstate.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in Register/GetByID");
+                string controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
+                string actionName = ControllerContext.RouteData.Values["action"]?.ToString();
+
+                ERRORREPORTING.ErrorLog(ex, $"{controllerName}/{actionName}", "Nirmal Nanera", GetCurrentUserId);
                 return new JsonResult(new { success = false, message = "Error retrieving user." });
             }
         }
@@ -147,7 +174,10 @@ namespace RealEstate.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in Register/GetDataWithPaging");
+                string controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
+                string actionName = ControllerContext.RouteData.Values["action"]?.ToString();
+
+                ERRORREPORTING.ErrorLog(ex, $"{controllerName}/{actionName}", "Nirmal Nanera", GetCurrentUserId);
                 return Json(new
                 {
                     draw = "",
@@ -165,9 +195,6 @@ namespace RealEstate.Web.Controllers
         /// Created By - Nirmal
         /// Created Date - 12.11.2025
         /// </summary>
-        /// <param name="ID">The ID of the user to perform the action on.</param>
-        /// <param name="ActionType">The type of action to perform (Delete or UpdateStatus).</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="JsonResult"/> indicating success or failure with appropriate message.</returns>
         [HttpPost]
         public async Task<IActionResult> GeneralAction(int ID, ActionType ActionType)
         {
@@ -178,19 +205,23 @@ namespace RealEstate.Web.Controllers
                 {
                     success = result,
                     message = result
-                         ? (ActionType == ActionType.Delete
-                    ? "User deleted successfully."
-                    : "User status updated successfully.")
-                : "Action failed."
+                        ? (ActionType == ActionType.Delete
+                            ? OperationMessages.Delete
+                            : OperationMessages.StatusChange)
+                        : OperationMessages.Error + "Action failed."
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in Register/GeneralAction");
+                string controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
+                string actionName = ControllerContext.RouteData.Values["action"]?.ToString();
+
+                ERRORREPORTING.ErrorLog(ex, $"{controllerName}/{actionName}", "Nirmal Nanera", GetCurrentUserId);
+
                 return new JsonResult(new
                 {
                     success = false,
-                    message = $"Error performing action: {ex.Message}"
+                    message = OperationMessages.Error + ex.Message
                 });
             }
         }

@@ -2,10 +2,9 @@
 // base URL
 /*window.baseURL = '@Url.Content("~/")';*/
 
-
 // Common RegExp
 const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
-const mobileNumberRegex = /^(?=.*\d)[\d\s().-]{7,15}$/;
+const mobileNumberRegex = /^[1-9]\d{4,14}$/;
 
 function showLoader() {
     document.getElementById("loader").style.display = "flex";

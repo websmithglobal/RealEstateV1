@@ -2,41 +2,41 @@
 
 @{
     ViewBag.Title = "User Login";
-    Layout = null; 
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="en" class="h-100">
 
 <!-- Mirrored from griya-html.vercel.app/page-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 31 Oct 2025 13:07:09 GMT -->
-<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<!-- Added by HTTrack -->
+<meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
-  	   <!-- Title -->
+    <!-- Title -->
     <title>Real Estate - User Login</title>
 
-	<!-- Meta -->
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="author" content="DexignZone">
-	<meta name="robots" content="">
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="DexignZone">
+    <meta name="robots" content="">
 
-	<meta name="keywords" content="admin dashboard, admin template, administration, analytics, bootstrap, broker, medical dashboard, modern, property, property admin, real estate, responsive admin dashboard">
-	<meta name="description" content="Griya is a premier real estate development that offers a range of high-quality residential properties designed to meet the diverse needs and preferences of buyers. With its commitment to excellence and attention to detail, Griya has established itself as a trusted brand in the real estate industry.">
+    <meta name="keywords" content="admin dashboard, admin template, administration, analytics, bootstrap, broker, medical dashboard, modern, property, property admin, real estate, responsive admin dashboard">
+    <meta name="description" content="Griya is a premier real estate development that offers a range of high-quality residential properties designed to meet the diverse needs and preferences of buyers. With its commitment to excellence and attention to detail, Griya has established itself as a trusted brand in the real estate industry.">
 
-	<meta property="og:title" content="Griya - Real Estate Admin & Dashboard Bootstrap 5 Template">
-	<meta property="og:description" content="Griya is a premier real estate development that offers a range of high-quality residential properties designed to meet the diverse needs and preferences of buyers. With its commitment to excellence and attention to detail, Griya has established itself as a trusted brand in the real estate industry.">
-	<meta property="og:image" content="../griya.dexignzone.com/xhtml/social-image.html">
-	<meta name="format-detection" content="telephone=no">
+    <meta property="og:title" content="Griya - Real Estate Admin & Dashboard Bootstrap 5 Template">
+    <meta property="og:description" content="Griya is a premier real estate development that offers a range of high-quality residential properties designed to meet the diverse needs and preferences of buyers. With its commitment to excellence and attention to detail, Griya has established itself as a trusted brand in the real estate industry.">
+    <meta property="og:image" content="../griya.dexignzone.com/xhtml/social-image.html">
+    <meta name="format-detection" content="telephone=no">
 
-	<!-- Mobile Specific -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Mobile Specific -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<!-- Favicon icon -->
-	<link rel="icon" type="image/png" href="images/favicon.png">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" href="@Url.Content("~/images/favicon.png")">
 
-	<link href="vendor/jquery-nice-select/css/nice-select.css" rel="stylesheet">
-      <link href="css/style.css" rel="stylesheet">
-
+    <link href="@Url.Content("~/vendor/jquery-nice-select/css/nice-select.css")" rel="stylesheet">
+    <link href="@Url.Content("~/css/style.css")" rel="stylesheet">
 </head>
 
 <body class="vh-100">
@@ -48,9 +48,9 @@
                         <div class="row no-gutters">
                             <div class="col-xl-12">
                                 <div class="auth-form">
-									<div class="text-center mb-3">
-										<h1>Real Estate</h1>
-									</div>
+                                    <div class="text-center mb-3">
+                                        <h1>Real Estate</h1>
+                                    </div>
 
                                     <!-- TEMP DATA MESSAGE DISPLAY -->
                                     @if (TempData["SuccessMessage"] != null)
@@ -118,11 +118,11 @@
 
     <!-- Required vendors -->
     <script src="@Url.Content("~/vendor/global/global.min.js")"></script>
-    <script src="@Url.Content("~/js/themejs/custom.min.js")"></script>
+    <script src="@Url.Content("~/js/ThemeJS/custom.min.js")"></script>
     <script src="@Url.Content("~/vendor/jquery-nice-select/js/jquery.nice-select.min.js")"></script>
-    <script src="@Url.Content("~/js/themejs/deznav-init.js")"></script>
-    <script src="@Url.Content("~/js/themejs/demo.js")"></script>
-    <script src="@Url.Content("~/js/themejs/styleSwitcher.js")"></script>
+    <script src="@Url.Content("~/js/ThemeJS/deznav-init.js")"></script>
+    <script src="@Url.Content("~/js/ThemeJS/demo.js")"></script>
+    <script src="@Url.Content("~/js/ThemeJS/styleSwitcher.js")"></script>
     <partial name="_ValidationScriptsPartial" />
 
     @* <script>

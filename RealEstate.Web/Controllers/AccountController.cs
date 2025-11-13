@@ -154,7 +154,7 @@ namespace RealEstate.Web.Controllers
                 "Account",
                 new { userId = user.Id, token = token },
                 protocol: HttpContext.Request.Scheme);
-            string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "email", "ForgotPassword.html");
+            string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "Email", "ForgotPassword.html");
             string template = System.IO.File.ReadAllText(filePath);
             string username = model.Email.Split('@')[0];
             string emailBody = template
@@ -324,21 +324,21 @@ namespace RealEstate.Web.Controllers
             {
                 // SuperAdmin can assign all roles
                 roles = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "SuperAdmin", Text = "SuperAdmin" },
-        new SelectListItem { Value = "Broker", Text = "Broker" },
-        new SelectListItem { Value = "Landlord", Text = "Landlord" },
-        new SelectListItem { Value = "Tenant", Text = "Tenant" }
-    };
+                {
+                    new SelectListItem { Value = "SuperAdmin", Text = "SuperAdmin" },
+                    new SelectListItem { Value = "Broker", Text = "Broker" },
+                    new SelectListItem { Value = "Landlord", Text = "Landlord" },
+                    new SelectListItem { Value = "Tenant", Text = "Tenant" }
+                };
             }
             else if (normalizedRoles.Contains("BROKER"))
             {
                 // Broker can assign only Landlord and Tenant
                 roles = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "Landlord", Text = "Landlord" },
-        new SelectListItem { Value = "Tenant", Text = "Tenant" }
-    };
+                {
+                    new SelectListItem { Value = "Landlord", Text = "Landlord" },
+                    new SelectListItem { Value = "Tenant", Text = "Tenant" }
+                };
             }
             return roles;
         }

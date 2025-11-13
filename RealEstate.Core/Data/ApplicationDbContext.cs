@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RealEstate.Core.Data.Entities;
 using RealEstate.Core.Identity;
 using RealEstate.Infrastructure.Data.Entities;
 
@@ -24,6 +25,7 @@ namespace RealEstate.Core.Data
         }
 
         public DbSet<UserMasterEntity> UserMaster { get; set; }
+        public DbSet<TenantMasterEntity> TenantMaster { get; set; }
 
         /// <summary>
         /// Configures the model for Entity Framework, applying base Identity configurations and custom entity mappings for UserMasterEntity.
@@ -48,6 +50,25 @@ namespace RealEstate.Core.Data
                 entity.Property(e => e.IsDelete)
                       .HasDefaultValue(false);
             });
+
+            modelBuilder.Entity<TenantMasterEntity>(entity =>
+            {
+                entity.HasKey(e => e.TenantIDP);
+
+                entity.Property(e => e.TenantIDP)
+                      .UseIdentityAlwaysColumn()
+                      .HasIdentityOptions(startValue: 1, incrementBy: 1);
+
+                entity.Property(e => e.IsActive)
+                      .HasDefaultValue(true);
+
+                entity.Property(e => e.IsDelete)
+                      .HasDefaultValue(false);
+
+                entity.Property(e => e.CreatedDate)
+                      .HasDefaultValueSql("NOW()");
+            });
+
         }
     }
 }

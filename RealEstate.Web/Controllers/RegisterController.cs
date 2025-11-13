@@ -200,15 +200,12 @@ namespace RealEstate.Web.Controllers
         {
             try
             {
-                bool result = await _userMaster.GeneralActionAsync(ID, ActionType);
+                var result = await _userMaster.GeneralActionAsync(ID, ActionType);
+
                 return new JsonResult(new
                 {
-                    success = result,
-                    message = result
-                        ? (ActionType == ActionType.Delete
-                            ? OperationMessages.Delete
-                            : OperationMessages.StatusChange)
-                        : OperationMessages.Error + "Action failed."
+                    success = result.Outval,
+                    message = result.Outmsg
                 });
             }
             catch (Exception ex)

@@ -40,9 +40,9 @@ namespace RealEstate.Web.Controllers
                 IWebHostEnvironment webHostEnvironment,
                 IEmailSender emailSender)
         {
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _logger = logger;
             _webHostEnvironment = webHostEnvironment;
             _emailSender = emailSender;
         }

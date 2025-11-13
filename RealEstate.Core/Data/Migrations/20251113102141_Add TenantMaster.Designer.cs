@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RealEstate.Core.Data;
@@ -11,9 +12,11 @@ using RealEstate.Core.Data;
 namespace RealEstate.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251113102141_Add TenantMaster")]
+    partial class AddTenantMaster
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,7 +205,7 @@ namespace RealEstate.Infrastructure.Data.Migrations
 
                     b.HasKey("TenantIDP");
 
-                    b.ToTable("TenantMaster");
+                    b.ToTable("TenantMasterEntity");
                 });
 
             modelBuilder.Entity("RealEstate.Core.Identity.ApplicationUser", b =>

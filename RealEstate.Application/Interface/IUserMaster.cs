@@ -48,6 +48,6 @@ namespace RealEstate.Application.Interface
         /// <param name="userId">The ID of the user to perform the action on.</param>
         /// <param name="actionType">The type of action to perform.</param>
         /// <returns>A task representing the asynchronous operation, returning true if successful.</returns>
-        Task<bool> GeneralActionAsync(int userId, ActionType actionType);
+        Task<SQLReturnMessageNValue> GeneralActionAsync(int userId, ActionType actionType);
     }
 }

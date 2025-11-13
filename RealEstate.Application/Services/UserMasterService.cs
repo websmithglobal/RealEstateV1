@@ -81,7 +81,7 @@ namespace RealEstate.Application.Services
                 if (dto.UserIDP == null || dto.UserIDP == 0)
                 {
                     var applicationUser = _mapper.Map<ApplicationUser>(dto);
-                    var createResult = await _userManager.CreateAsync(applicationUser, dto.Password ?? "Default@123");
+                    var createResult = await _userManager.CreateAsync(applicationUser, dto.Password ?? "Admin@123");
                     if (!createResult.Succeeded)
                         return new SQLReturnMessageNValue
                         {
@@ -197,11 +197,11 @@ namespace RealEstate.Application.Services
             {
                 var entity = await _context.UserMaster.FirstOrDefaultAsync(x => x.UserIDP == userID);
                 if (entity == null)
-                    throw new Exception("User not found.");
+                    return null;
 
                 var aspUser = await _userManager.FindByIdAsync(entity.AspNetUserIDF.ToString());
                 if (aspUser == null)
-                    throw new Exception("Associated AspNetUser not found.");
+                    return null;
 
                 var roles = await _userManager.GetRolesAsync(aspUser);
                 string role = roles.FirstOrDefault() ?? "N/A";
@@ -213,22 +213,22 @@ namespace RealEstate.Application.Services
 
                 return dto;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception(OperationMessages.Error + ex.Message);
+                return null;
             }
         }
 
         /// <summary>
         /// Retrieves paged user master entities asynchronously.
         /// </summary>
-        public async Task<UserMasterEntityPaging> GetPagedAsync(CommonPagingDTO paging, Guid loginUserId)
+        public async Task<UserMasterEntityPaging> GetPagedAsync(CommonPagingDTO paging, Guid loginUserID)
         {
             try
             {
-                var currentUser = await _userManager.FindByIdAsync(loginUserId.ToString());
+                var currentUser = await _userManager.FindByIdAsync(loginUserID.ToString());
                 if (currentUser == null)
-                    throw new Exception("User not found");
+                    return new UserMasterEntityPaging { Records = new List<UserMasterDTO>(), TotalRecord = 0 };
 
                 var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
 
@@ -250,7 +250,7 @@ namespace RealEstate.Application.Services
                     join r in _context.Roles on ur.RoleId equals r.Id into roleJoin
                     from r in roleJoin.DefaultIfEmpty()
                     where !u.IsDelete &&
-                          (r == null || r.Name != "SuperAdmin") 
+                          (r == null || r.Name != "SuperAdmin")
                     select new
                     {
                         u.UserIDP,
@@ -268,17 +268,15 @@ namespace RealEstate.Application.Services
                 if (!isSuperAdmin)
                 {
                     if (visibleRoles == null || !visibleRoles.Any())
-                        query = query.Where(x => false); 
+                        query = query.Where(x => false);
                     else
                         query = query.Where(x => x.RoleName != null && visibleRoles.Contains(x.RoleName));
                 }
-                else
-                {
-                    query = query.Where(x => x.AspNetUserIDF != loginUserId);
-                }
+
+                query = query.Where(x => x.AspNetUserIDF != loginUserID);
 
                 if (isBroker)
-                    query = query.Where(x => x.CreatedBy == loginUserId);
+                    query = query.Where(x => x.CreatedBy == loginUserID);
 
                 if (!string.IsNullOrWhiteSpace(paging.SearchValue))
                 {
@@ -315,7 +313,7 @@ namespace RealEstate.Application.Services
                     UserIDP = x.UserIDP,
                     FullName = x.FullName,
                     IsActive = x.IsActive,
-                    CreatedDate = x.CreatedDate.ToString(),
+                    CreatedDate = x.CreatedDate.Value.ToString("dd-MM-yyyy"),
                     Email = x.Email,
                     PhoneNumber = x.PhoneNumber,
                     RoleName = x.RoleName
@@ -329,25 +327,37 @@ namespace RealEstate.Application.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(OperationMessages.Error + ex.Message);
+                return new UserMasterEntityPaging
+                {
+                    Records = new List<UserMasterDTO>(),
+                    TotalRecord = 0
+                };
             }
         }
 
         /// <summary>
         /// Performs a general action on a user asynchronously (delete or toggle status).
         /// </summary>
-        public async Task<bool> GeneralActionAsync(int userId, ActionType actionType)
+        public async Task<SQLReturnMessageNValue> GeneralActionAsync(int userId, ActionType actionType)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var entity = await _context.UserMaster.FirstOrDefaultAsync(x => x.UserIDP == userId);
                 if (entity == null)
-                    throw new Exception(OperationMessages.Error + "User not found.");
+                    return new SQLReturnMessageNValue
+                    {
+                        Outval = 0,
+                        Outmsg = OperationMessages.Error + "User not found."
+                    };
 
                 var aspUser = await _userManager.FindByIdAsync(entity.AspNetUserIDF.ToString());
                 if (aspUser == null)
-                    throw new Exception(OperationMessages.Error + "Linked Identity user not found.");
+                    return new SQLReturnMessageNValue
+                    {
+                        Outval = 0,
+                        Outmsg = OperationMessages.Error + "Linked Identity user not found."
+                    };
 
                 switch (actionType)
                 {
@@ -359,12 +369,25 @@ namespace RealEstate.Application.Services
 
                         aspUser.LockoutEnabled = true;
                         aspUser.LockoutEnd = DateTimeOffset.UtcNow.AddYears(1000);
-                        var updateResult = await _userManager.UpdateAsync(aspUser);
-                        if (!updateResult.Succeeded)
-                            throw new Exception(OperationMessages.Error + string.Join("; ", updateResult.Errors.Select(e => e.Description)));
+
+                        var deleteResult = await _userManager.UpdateAsync(aspUser);
+                        if (!deleteResult.Succeeded)
+                        {
+                            return new SQLReturnMessageNValue
+                            {
+                                Outval = 0,
+                                Outmsg = OperationMessages.Error + string.Join("; ", deleteResult.Errors.Select(e => e.Description))
+                            };
+                        }
 
                         await _context.SaveChangesAsync();
-                        break;
+                        await transaction.CommitAsync();
+
+                        return new SQLReturnMessageNValue
+                        {
+                            Outval = 1,
+                            Outmsg = OperationMessages.Delete
+                        };
 
                     case ActionType.UpdateStatus:
                         entity.IsActive = !entity.IsActive;
@@ -382,21 +405,42 @@ namespace RealEstate.Application.Services
                         }
 
                         _context.UserMaster.Update(entity);
-                        await _userManager.UpdateAsync(aspUser);
+                        var statusResult = await _userManager.UpdateAsync(aspUser);
+
+                        if (!statusResult.Succeeded)
+                        {
+                            return new SQLReturnMessageNValue
+                            {
+                                Outval = 0,
+                                Outmsg = OperationMessages.Error + string.Join("; ", statusResult.Errors.Select(e => e.Description))
+                            };
+                        }
+
                         await _context.SaveChangesAsync();
-                        break;
+                        await transaction.CommitAsync();
+
+                        return new SQLReturnMessageNValue
+                        {
+                            Outval = 1,
+                            Outmsg = OperationMessages.StatusChange
+                        };
 
                     default:
-                        throw new Exception(OperationMessages.Error + "Invalid action type.");
+                        return new SQLReturnMessageNValue
+                        {
+                            Outval = 0,
+                            Outmsg = OperationMessages.Error + "Invalid action type."
+                        };
                 }
-
-                await transaction.CommitAsync();
-                return true;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                throw new Exception(OperationMessages.Error + ex.Message);
+                return new SQLReturnMessageNValue
+                {
+                    Outval = 0,
+                    Outmsg = OperationMessages.Error + ex.Message
+                };
             }
         }
         #endregion

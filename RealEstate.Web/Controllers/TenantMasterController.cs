@@ -8,51 +8,57 @@ using SQLHelper;
 namespace RealEstate.Web.Controllers
 {
     /// <summary>
-    /// Represents a controller for handling user registration and management operations, including saving, retrieving, paging, and performing general actions on users.
+    /// Represents a controller for managing tenant operations, including saving, retrieving, paging, and performing general actions on tenants.
     /// Created By - Nirmal
-    /// Created Date - 12.11.2025
+    /// Created Date - 13.11.2025
     /// </summary>
-    public class RegisterController : BaseController
+    public class TenantMasterController : BaseController
     {
         #region Variables
-        private readonly IUserMaster _userMaster;
-        private readonly ILogger<RegisterController> _logger;
+        private readonly ITenantMaster _tenantMaster;
+        private readonly ILogger<TenantMasterController> _logger;
         #endregion
 
         #region Constructor
         /// <summary>
-        /// Initializes a new instance of the <see cref="RegisterController"/> class.
+        /// Initializes a new instance of the <see cref="TenantMasterController"/> class.
         /// Created By - Nirmal
-        /// Created Date - 12.11.2025
+        /// Created Date - 13.11.2025
         /// </summary>
-        /// <param name="userMaster">The service for user master operations.</param>
+        /// <param name="tenantMaster">The service for tenant master operations.</param>
         /// <param name="logger">The logger for logging information and errors.</param>
-        public RegisterController(IUserMaster userMaster, ILogger<RegisterController> logger)
+        public TenantMasterController(ITenantMaster tenantMaster, ILogger<TenantMasterController> logger)
         {
-            _userMaster = userMaster;
+            _tenantMaster = tenantMaster;
             _logger = logger;
+        }
+        #endregion
+
+        #region Index
+        /// <summary>
+        /// Displays the main tenant management view.
+        /// Created By - Nirmal
+        /// Created Date - 13.11.2025
+        /// </summary>
+        public IActionResult Index()
+        {
+            return View();
         }
         #endregion
 
         #region Save
         /// <summary>
-        /// Saves or updates a user. If UserIDP = 0, a new record is inserted, otherwise updated.
+        /// Saves or updates a tenant. If TenantIDP = 0, a new record is inserted, otherwise updated.
         /// Created By - Nirmal
-        /// Created Date - 12.11.2025
+        /// Created Date - 13.11.2025
         /// </summary>
-        /// <param name="dto">The data transfer object containing user details to save or update.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="JsonResult"/> indicating success or failure.</returns>
+        /// <param name="dto">The data transfer object containing tenant details to save or update.</param>
+        /// <returns>A <see cref="JsonResult"/> indicating success or failure.</returns>
         [HttpPost]
-        public async Task<IActionResult> Save(UserMasterSaveDTO dto)
+        public async Task<IActionResult> Save(TenantMasterSaveDTO dto)
         {
             try
             {
-                if (dto.UserIDP != 0)
-                {
-                    ModelState.Remove(nameof(dto.Password));
-                    ModelState.Remove(nameof(dto.ConfirmPassword));
-                }
-
                 // Model validation
                 if (!ModelState.IsValid)
                 {
@@ -71,16 +77,9 @@ namespace RealEstate.Web.Controllers
                     });
                 }
 
+                // Assign current user ID
                 dto.UserIDF = GetCurrentUserId;
-                var result = await _userMaster.SaveAsync(dto);
-
-                if (result.Outval.ToString() == "99")
-                {
-                    if (result.Outmsg.Contains("Email"))
-                        result.Outmsg = OperationMessages.EmailExists;
-                    else if (result.Outmsg.Contains("Mobile"))
-                        result.Outmsg = OperationMessages.MobileExists;
-                }
+                var result = await _tenantMaster.SaveAsync(dto);
 
                 return new JsonResult(new
                 {
@@ -101,43 +100,42 @@ namespace RealEstate.Web.Controllers
                 });
             }
         }
-
         #endregion Save
 
         #region Get By ID
         /// <summary>
-        /// Retrieves user details by ID.
+        /// Retrieves tenant details by ID.
         /// Created By - Nirmal
-        /// Created Date - 12.11.2025
+        /// Created Date - 13.11.2025
         /// </summary>
-        /// <param name="id">The ID of the user to retrieve.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="JsonResult"/> with user data or error message.</returns>
+        /// <param name="id">The ID of the tenant to retrieve.</param>
+        /// <returns>A <see cref="JsonResult"/> containing tenant data or an error message.</returns>
         [HttpPost]
         public async Task<IActionResult> GetByID(int id)
         {
             try
             {
-                var data = await _userMaster.GetByIdAsync(id);
+                var data = await _tenantMaster.GetByIdAsync(id);
                 return new JsonResult(new { success = true, data });
             }
             catch (Exception ex)
             {
                 string controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
                 string actionName = ControllerContext.RouteData.Values["action"]?.ToString();
-
                 ERRORREPORTING.ErrorLog(ex, $"{controllerName}/{actionName}", "Nirmal Nanera", GetCurrentUserId);
-                return new JsonResult(new { success = false, message = "Error retrieving user." });
+
+                return new JsonResult(new { success = false, message = "Error retrieving tenant." });
             }
         }
         #endregion Get By ID
 
         #region Get Data With Paging
         /// <summary>
-        /// Fetches paged user list with search and sorting.
+        /// Fetches a paginated list of tenants created by the current user with optional search and sorting.
         /// Created By - Nirmal
-        /// Created Date - 12.11.2025
+        /// Created Date - 13.11.2025
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="JsonResult"/> in DataTables format with paged data or error handling.</returns>
+        /// <returns>A <see cref="JsonResult"/> in DataTables format containing paged tenant data.</returns>
         [HttpPost]
         public async Task<IActionResult> GetDataWithPaging()
         {
@@ -155,6 +153,7 @@ namespace RealEstate.Web.Controllers
                 string sortDirStr = form["order[0][dir]"];
                 int sortDir = sortDirStr == "asc" ? 0 : 1;
                 string searchValue = form["search[value]"];
+
                 CommonPagingDTO model = new()
                 {
                     DisplayLength = pageSize,
@@ -163,7 +162,10 @@ namespace RealEstate.Web.Controllers
                     OrderByType = sortDir,
                     SearchValue = searchValue
                 };
-                var data = await _userMaster.GetPagedAsync(model, GetCurrentUserId);
+
+                // Filter tenants by logged-in user
+                var data = await _tenantMaster.GetPagedAsync(model, GetCurrentUserId);
+
                 return Json(new
                 {
                     draw,
@@ -176,8 +178,8 @@ namespace RealEstate.Web.Controllers
             {
                 string controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
                 string actionName = ControllerContext.RouteData.Values["action"]?.ToString();
-
                 ERRORREPORTING.ErrorLog(ex, $"{controllerName}/{actionName}", "Nirmal Nanera", GetCurrentUserId);
+
                 return Json(new
                 {
                     draw = "",
@@ -191,16 +193,19 @@ namespace RealEstate.Web.Controllers
 
         #region General Action
         /// <summary>
-        /// Performs delete (1) or status change (2) on a user.
+        /// Performs delete (1) or status change (2) on a tenant record.
         /// Created By - Nirmal
-        /// Created Date - 12.11.2025
+        /// Created Date - 13.11.2025
         /// </summary>
+        /// <param name="ID">The ID of the tenant to perform the action on.</param>
+        /// <param name="ActionType">The action type (Delete or Status Change).</param>
+        /// <returns>A <see cref="JsonResult"/> indicating success or failure.</returns>
         [HttpPost]
         public async Task<IActionResult> GeneralAction(int ID, ActionType ActionType)
         {
             try
             {
-                var result = await _userMaster.GeneralActionAsync(ID, ActionType);
+                var result = await _tenantMaster.GeneralActionAsync(ID, ActionType);
 
                 return new JsonResult(new
                 {
@@ -212,7 +217,6 @@ namespace RealEstate.Web.Controllers
             {
                 string controllerName = ControllerContext.RouteData.Values["controller"]?.ToString();
                 string actionName = ControllerContext.RouteData.Values["action"]?.ToString();
-
                 ERRORREPORTING.ErrorLog(ex, $"{controllerName}/{actionName}", "Nirmal Nanera", GetCurrentUserId);
 
                 return new JsonResult(new

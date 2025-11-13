@@ -39,11 +39,12 @@ namespace RealEstate.Infrastructure.Extensions
             services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<UserMappingProfile>();
-                //cfg.AddProfile<RoleMappingProfile>();
+                cfg.AddProfile<TenantMappingProfile>();
             });
             // Resolve dependencies
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IUserMaster, UserMasterService>();
+            services.AddScoped<ITenantMaster, TenantMasterService>();
             return services;
         }
     }

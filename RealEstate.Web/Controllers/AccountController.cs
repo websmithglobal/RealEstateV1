@@ -298,7 +298,7 @@ namespace RealEstate.Web.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                throw new Exception("User not found");
+                return View();
             // Get roles (normalized role names may be returned)
             var roles = await _userManager.GetRolesAsync(user);
             // Determine which roles can be assigned

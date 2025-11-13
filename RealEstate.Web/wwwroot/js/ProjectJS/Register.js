@@ -127,7 +127,7 @@ function Save() {
     }
 
     $.ajax({
-        url: "/Register/Save",
+        url: baseURL + "/Register/Save",
         type: "POST",
         data: model,
         success: function (res) {
@@ -155,15 +155,13 @@ function Save() {
 }
 
 function edit(id) {
-    console.log(id);
     $.ajax({
-        url: '/Register/GetByID',
+        url: baseURL + '/Register/GetByID',
         type: 'POST',
         data: { id: id },
         success: function (res) {
             if (res.success && res.data) {
                 const data = res.data; // already a JSON object
-                console.log(data)
                 $("#Id").val(data.userIDP);
                 $("#fullName").val(data.fullName);
                 $("#email").val(data.email);
@@ -191,17 +189,28 @@ function GetDataWithPaging() {
             "processing": true,
             "serverSide": true,
             "autoWidth": false,
+
+            // 👇 CUSTOM PAGINATION ARROWS
+            "language": {
+                "paginate": {
+                    "previous": "<i class='bi bi-chevron-left'></i>",
+                    "next": "<i class='bi bi-chevron-right'></i>"
+                }
+            },
+
             "ajax": {
-                url: window.baseURL + "Register/GetDataWithPaging",
+                url: baseURL + "Register/GetDataWithPaging",
                 type: "POST",
                 datatype: "json"
             },
+
             "columns": [
                 { "data": "srNo", "orderable": false },
                 { "data": "fullName", "orderable": false },
                 { "data": "email", "orderable": false },
                 { "data": "phoneNumber", "orderable": false },
                 { "data": "roleName", "orderable": false },
+
                 {
                     "data": "isActive",
                     "orderable": false,
@@ -214,6 +223,7 @@ function GetDataWithPaging() {
                         `;
                     }
                 },
+
                 {
                     "data": "userIDP",
                     "orderable": false,
@@ -233,12 +243,12 @@ function GetDataWithPaging() {
                     }
                 }
             ]
-            // Removed invalid "order" index
         });
     } else {
         $('#dataTbl').DataTable().ajax.reload();
     }
 }
+
 
 function GeneralAction(id, actionType) {
     let title = 'Are you sure?';
@@ -256,7 +266,7 @@ function GeneralAction(id, actionType) {
         if (result.isConfirmed) {
             $.ajax({
                 type: "POST",
-                url: "/Register/GeneralAction",
+                url: baseURL + "/Register/GeneralAction",
                 data: { ID: id, ActionType: actionType }, // Note: keys match C# method parameters
                 success: function (mRes) {
                     showToast(mRes.message || "Action completed successfully.", mRes.success ? "success" : "error");

@@ -1,137 +1,150 @@
 ﻿@model RealEstate.Application.DTOs.LoginDTO
-
 @{
     ViewBag.Title = "User Login";
     Layout = null;
 }
 
-<!DOCTYPE html>
-<html lang="en" class="h-100">
+<!doctype html>
+<html lang="en">
 
-<!-- Mirrored from griya-html.vercel.app/page-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 31 Oct 2025 13:07:09 GMT -->
-<!-- Added by HTTrack -->
-<meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
-    <!-- Title -->
-    <title>Real Estate - User Login</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="author" content="DexignZone">
-    <meta name="robots" content="">
+    <title>Real Estate - Login</title>
 
-    <meta name="keywords" content="admin dashboard, admin template, administration, analytics, bootstrap, broker, medical dashboard, modern, property, property admin, real estate, responsive admin dashboard">
-    <meta name="description" content="Griya is a premier real estate development that offers a range of high-quality residential properties designed to meet the diverse needs and preferences of buyers. With its commitment to excellence and attention to detail, Griya has established itself as a trusted brand in the real estate industry.">
+    <!-- favicon -->
+    <link rel="icon" href="@Url.Content("~/images/favicon-32x32.png")" type="image/png" />
 
-    <meta property="og:title" content="Griya - Real Estate Admin & Dashboard Bootstrap 5 Template">
-    <meta property="og:description" content="Griya is a premier real estate development that offers a range of high-quality residential properties designed to meet the diverse needs and preferences of buyers. With its commitment to excellence and attention to detail, Griya has established itself as a trusted brand in the real estate industry.">
-    <meta property="og:image" content="../griya.dexignzone.com/xhtml/social-image.html">
-    <meta name="format-detection" content="telephone=no">
+    <!-- Rocker Template CSS -->
+    <link href="@Url.Content("~/plugins/simplebar/css/simplebar.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/plugins/perfect-scrollbar/css/perfect-scrollbar.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/plugins/metismenu/css/metisMenu.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/bootstrap.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/bootstrap-extended.css")" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="@Url.Content("~/css/app.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/icons.css")" rel="stylesheet" />
 
-    <!-- Mobile Specific -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Favicon icon -->
-    <link rel="icon" type="image/png" href="@Url.Content("~/images/favicon.png")">
-
-    <link href="@Url.Content("~/vendor/jquery-nice-select/css/nice-select.css")" rel="stylesheet">
-    <link href="@Url.Content("~/css/style.css")" rel="stylesheet">
 </head>
 
-<body class="vh-100">
-    <div class="authincation h-100">
-        <div class="container h-100">
-            <div class="row justify-content-center h-100 align-items-center">
-                <div class="col-md-6">
-                    <div class="authincation-content">
-                        <div class="row no-gutters">
-                            <div class="col-xl-12">
-                                <div class="auth-form">
-                                    <div class="text-center mb-3">
-                                        <h1>Real Estate</h1>
-                                    </div>
+<body>
 
-                                    <!-- TEMP DATA MESSAGE DISPLAY -->
-                                    @if (TempData["SuccessMessage"] != null)
-                                    {
-                                        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-                                            <strong>Success!</strong> @TempData["SuccessMessage"]
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                    }
+    <div class="wrapper">
+        <div class="section-authentication-cover">
 
-                                    @if (TempData["ErrorMessage"] != null)
-                                    {
-                                        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-                                            <strong>Error!</strong> @TempData["ErrorMessage"]
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                    }
-                                    <!-- END TEMP DATA -->
+            <div class="row g-0">
 
-                                    <h4 class="text-center mb-4">Sign in your account</h4>
-                                    <form asp-action="Login" asp-controller="Account" method="post">
-                                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                                        <div class="mb-3">
-                                            <label asp-for="Email" class="mb-1"><strong>Email</strong></label>
-                                            <input asp-for="Email" class="form-control" placeholder="Enter email" />
-                                            <span asp-validation-for="Email" class="text-danger"></span>
-                                        </div>
-
-                                        <div class="mb-3 position-relative">
-                                            <label asp-for="Password" class="mb-1"><strong>Password</strong></label>
-                                            <input asp-for="Password" id="dz-password" class="form-control" placeholder="Enter Password" />
-                                            <span asp-validation-for="Password" class="text-danger"></span>
-                                            <span class="show-pass eye">
-                                                <i class="fa fa-eye-slash"></i>
-                                                <i class="fa fa-eye"></i>
-                                            </span>
-                                        </div>
-
-                                        <div class="row d-flex justify-content-between mt-4 mb-2">
-                                            <div class="mb-3">
-                                                <div class="form-check custom-checkbox ms-1">
-                                                    <input asp-for="RememberMe" class="form-check-input" id="basic_checkbox_1" />
-                                                    <label class="form-check-label" asp-for="RememberMe"></label>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <a asp-controller="Account" asp-action="ForgotPassword">Forgot Password?</a>
-                                            </div>
-                                        </div>
-
-                                        <div class="text-center">
-                                            <button type="submit" class="btn btn-primary btn-block">Sign Me In</button>
-                                        </div>
-                                    </form>
-
-                                </div>
-                            </div>
+                <!-- Left image section -->
+                <div class="col-12 col-xl-7 col-xxl-8 auth-cover-left d-none d-xl-flex align-items-center justify-content-center">
+                    <div class="card shadow-none bg-transparent rounded-0 mb-0">
+                        <div class="card-body">
+                            <img src="@Url.Content("~/images/login-images/login-cover.svg")" class="img-fluid" width="650" alt="">
                         </div>
                     </div>
                 </div>
+
+                <!-- Right login section -->
+                <div class="col-12 col-xl-5 col-xxl-4 auth-cover-right align-items-center justify-content-center">
+                    <div class="card rounded-0 m-3 shadow-none bg-transparent">
+                        <div class="card-body p-sm-5">
+
+                            <div class="text-center mb-3">
+                                <img src="@Url.Content("~/images/logo-icon.png")" width="60" alt="">
+                            </div>
+
+                            <div class="text-center mb-4">
+                                <h5 class="">Real Estate</h5>
+                                <p class="mb-0">Please log in to your account</p>
+                            </div>
+
+                            <!-- TEMP DATA MESSAGES -->
+                            @if (TempData["SuccessMessage"] != null)
+                            {
+                                <div class="alert alert-success text-center">
+                                    <strong>Success!</strong> @TempData["SuccessMessage"]
+                                </div>
+                            }
+
+                            @if (TempData["ErrorMessage"] != null)
+                            {
+                                <div class="alert alert-danger text-center">
+                                    <strong>Error!</strong> @TempData["ErrorMessage"]
+                                </div>
+                            }
+                            <!-- END TEMP DATA -->
+
+                            <div class="form-body">
+                                <form asp-action="Login" asp-controller="Account" method="post" class="row g-3">
+
+                                    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+                                    <!-- Email -->
+                                    <div class="col-12">
+                                        <label asp-for="Email" class="form-label">Email</label>
+                                        <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Password with show/hide -->
+                                    <div class="col-12">
+                                        <label asp-for="Password" class="form-label">Password</label>
+                                        <div class="input-group" id="show_hide_password">
+                                            <input asp-for="Password" type="password" class="form-control border-end-0" placeholder="Enter Password">
+                                            <a href="javascript:;" class="input-group-text bg-transparent"><i class="bx bx-hide"></i></a>
+                                        </div>
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Remember me + forgot -->
+                                    <div class="col-md-6">
+                                        <div class="form-check form-switch">
+                                            <input asp-for="RememberMe" class="form-check-input" type="checkbox" />
+                                            <label class="form-check-label" asp-for="RememberMe"></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 text-end">
+                                        <a asp-controller="Account" asp-action="ForgotPassword">Forgot Password?</a>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <div class="col-12">
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary">Sign in</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
+
         </div>
     </div>
 
-    <!-- Required vendors -->
-    <script src="@Url.Content("~/vendor/global/global.min.js")"></script>
-    <script src="@Url.Content("~/js/ThemeJS/custom.min.js")"></script>
-    <script src="@Url.Content("~/vendor/jquery-nice-select/js/jquery.nice-select.min.js")"></script>
-    <script src="@Url.Content("~/js/ThemeJS/deznav-init.js")"></script>
-    <script src="@Url.Content("~/js/ThemeJS/demo.js")"></script>
-    @* <script src="@Url.Content("~/js/ThemeJS/styleSwitcher.js")"></script> *@
+    <!-- Scripts -->
+    <script src="@Url.Content("~/js/ThemeJS/bootstrap.bundle.min.js")"></script>
+    <script src="@Url.Content("~/js/ThemeJS/jquery.min.js")"></script>
+    <script src="@Url.Content("~/plugins/simplebar/js/simplebar.min.js")"></script>
+    <script src="@Url.Content("~/plugins/metismenu/js/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/plugins/perfect-scrollbar/js/perfect-scrollbar.js")"></script>
+    <script src="@Url.Content("~/js/projectjs/commonjs/CommonUtilities.js")"></script>
+
+    <!-- Password Toggle -->
+    <script>
+        $(document).ready(function () {
+            togglePassword("#show_hide_password");
+        });
+    </script>
+
+    <script src="@Url.Content("~/js/ThemeJS/app.js")"></script>
+
     <partial name="_ValidationScriptsPartial" />
 
-    @* <script>
-        window.onpageshow = function (event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        };
-    </script> *@
 </body>
-
 </html>

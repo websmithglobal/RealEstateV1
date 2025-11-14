@@ -126,6 +126,7 @@ function getData() {
         $("#dataTBL").DataTable({
             processing: true,
             serverSide: true,
+            "ordering": false,
             ajax: {
                 url: baseURL + "PropertyTypeMaster/GetDataWithPaging",
                 type: "POST"

@@ -4,6 +4,7 @@ $(document).ready(function () {
     $('#userModal').on('shown.bs.modal', function () {
         Select2Helper('userModal');
     });
+
 });
 
 function openModal(type) {
@@ -29,7 +30,7 @@ function validate() {
     let isValid = true;
     let firstInvalidField = null;
     if (!role) {
-        $("#RoleError").text("Please select a Role.");
+        $("#RoleError").text("Please select a role.");
         isValid = false;
         if (!firstInvalidField) firstInvalidField = "#Role";
         // Move error message after the visible select2 container
@@ -41,7 +42,7 @@ function validate() {
 
     // Validate Full Name
     if (!fullName) {
-        $("#FullNameError").text("Please enter Full Name.");
+        $("#FullNameError").text("Please enter full name.");
         isValid = false;
         if (!firstInvalidField) firstInvalidField = "#FullName";
     }
@@ -66,7 +67,7 @@ function validate() {
 
     // Validate Email
     if (!email) {
-        $("#EmailError").text("Please enter Email.");
+        $("#EmailError").text("Please enter email.");
         isValid = false;
         if (!firstInvalidField) firstInvalidField = "#Email";
     }
@@ -91,7 +92,7 @@ function validate() {
 
     // Validate Mobile Number
     if (!mobileNumber) {
-        $("#PhoneNumberError").text("Please enter phone Number.");
+        $("#PhoneNumberError").text("Please enter phone number.");
         isValid = false;
         if (!firstInvalidField) firstInvalidField = "#PhoneNumber";
     }
@@ -119,7 +120,7 @@ function validate() {
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,20}$/;
 
         if (!password) {
-            $("#PasswordError").text("Please enter Password.");
+            $("#PasswordError").text("Please enter password.");
             isValid = false;
             if (!firstInvalidField) firstInvalidField = "#Password";
         }
@@ -144,7 +145,7 @@ function validate() {
 
         // Validate Confirm Password
         if (!confirmPassword) {
-            $("#ConfirmPasswordError").text("Please enter confirm Password.");
+            $("#ConfirmPasswordError").text("Please enter confirm password.");
             isValid = false;
             if (!firstInvalidField) firstInvalidField = "#ConfirmPassword";
         }
@@ -250,12 +251,14 @@ function edit(id) {
         data: { id: id },
         success: function (res) {
             if (res.success && res.data) {
+                console.log(res)
                 const data = res.data; // already a JSON object
                 $("#Id").val(data.userIDP);
                 $("#FullName").val(data.fullName);
                 $("#Email").val(data.email);
                 $("#PhoneNumber").val(data.phoneNumber);
                 $("#Role").val(data.roleName).trigger('change');
+                console.log(data.roleName)
                 $("#userModalLabel").text("Edit User");
                 $("#BtnSaveUser").text("Update");
                 // Hide password fields in edit mode
@@ -278,26 +281,17 @@ function getData() {
             "serverSide": true,
             "ordering": false,
             "autoWidth": false,
-            "language": {
-                "paginate": {
-                    "previous": "<i class='bi bi-chevron-left'></i>",
-                    "next": "<i class='bi bi-chevron-right'></i>"
-                }
-            },
-
             "ajax": {
                 url: baseURL + "Register/GetDataWithPaging",
                 type: "POST",
                 datatype: "json"
             },
-
             "columns": [
                 { "data": "srNo", "orderable": false },
                 { "data": "fullName", "orderable": false },
                 { "data": "email", "orderable": false },
                 { "data": "phoneNumber", "orderable": false },
                 { "data": "roleName", "orderable": false },
-
                 {
                     "data": "isActive",
                     "orderable": false,
@@ -310,7 +304,6 @@ function getData() {
                         `;
                     }
                 },
-
                 {
                     "data": "userIDP",
                     "orderable": false,
@@ -319,12 +312,12 @@ function getData() {
                             <button type="button" class="btn btn-primary btn-sm"
                                     onclick="edit('${data}')"
                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                                <i class="bi bi-pencil"></i>
+                                <i class="fadeIn animated bx bx-pencil"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-sm"
                                     onclick="generalAction(${data}, 1)"
                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
-                                <i class="bi bi-trash"></i>
+                                <i class="fadeIn animated bx bx-trash-alt"></i>
                             </button>
                         `;
                     }

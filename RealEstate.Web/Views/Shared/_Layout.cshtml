@@ -1,305 +1,362 @@
-﻿@{
+﻿@using System.Security.Claims
+@{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var roles = User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToList();
 }
-
 <!DOCTYPE html>
 <html lang="en">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <head>
     <title>@ViewData["Title"] - Real Estate</title>
-
     <!-- Meta -->
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="author" content="Websmith Solution">
-    <meta name="robots" content="index, follow">
-
-    <meta name="keywords" content="real estate, property management, property listings, real estate admin, dashboard, brokers, agents, residential, commercial">
-    <meta name="description" content="A complete Real Estate Management Platform for property listings, agents, customers, and workflow automation.">
-
-    <meta property="og:title" content="RealEstatePro - Real Estate Admin Dashboard">
-    <meta property="og:description" content="A premium real estate management dashboard for listings, agents, and property analytics.">
-    <meta property="og:image" content="@Url.Content("~/images/og-image.png")">
-    <meta name="format-detection" content="telephone=no">
-
-    <!-- Mobile Specific -->
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--favicon-->
+    <link rel="icon" href="@Url.Content("~/images/favicon-32x32.png")" type="image/png" />
+    <!-- plugins -->
+    <link href="@Url.Content("~/plugins/simplebar/css/simplebar.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/plugins/perfect-scrollbar/css/perfect-scrollbar.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/plugins/metismenu/css/metisMenu.min.css")" rel="stylesheet" />
+    @* <script src="@Url.Content("~/plugins/datatable/css/dataTables.bootstrap5.min.css")"></script> *@
+   
+    <!-- Bootstrap CSS -->
+    <link href="@Url.Content("~/css/bootstrap.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/bootstrap-extended.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/select2.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/select2-bootstrap-5-theme.min.css")" rel="stylesheet" />
+    <!-- Select2 CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet">
+    <link href="@Url.Content("~/css/app.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/icons.css")" rel="stylesheet" />
+    <!-- Theme Style CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/css/dark-theme.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/semi-dark.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/header-colors.css")" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="@Url.Content("~/images/favicon.png")">
-
-    <!-- Vendor CSS -->
-    <link href="@Url.Content("~/vendor/jquery-nice-select/css/nice-select.css")" rel="stylesheet">
-    <link href="@Url.Content("~/vendor/dotted-map/css/contrib/jquery.smallipop-0.3.0.min.css")" rel="stylesheet" media="all">
-
-    <!-- Datatable -->
-    <link href="@Url.Content("~/vendor/datatables/css/jquery.dataTables.min.css")" rel="stylesheet">
-    <link rel="stylesheet" href="@Url.Content("~/vendor/toastr/css/toastr.min.css")">
-    <link href="@Url.Content("~/vendor/sweetalert2/dist/sweetalert2.min.css")" rel="stylesheet">
-
-    <!-- Main Style -->
-    <link href="@Url.Content("~/css/style.css")" rel="stylesheet">
-    <link href="@Url.Content("~/css/custom-select2.css")" rel="stylesheet" />
-
-    <style>
-        /* Preloader background */
-        /* Loader Overlay */
-        .loader-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            display: none;
-        }
-
-        /* Loader Animation */
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3F51B5;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @@keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .form-label.required {
-            color: inherit !important; /* ensures label text stays normal color */
-        }
-
-            .form-label.required::after {
-                content: " *";
-                color: red;
-                font-weight: bold;
-            }
-
-    </style>
+    <title>@ViewBag.Title - Real Estate</title>
 </head>
 <body>
-
-    <div id="main-wrapper">
-
-        <div class="nav-header">
-            <a href="@Url.Action("Index","Home")" class="brand-logo">
-                <h5>Real Estate</h5>
-            </a>
-            <div class="nav-control">
-                <div class="hamburger">
-                    <span class="line"></span><span class="line"></span><span class="line"></span>
+    <!--wrapper-->
+    <div class="wrapper app-container">
+        <!--sidebar wrapper -->
+        <div class="sidebar-wrapper" data-simplebar="true">
+            <div class="sidebar-header">
+                <div>
+                    <img src="@Url.Content("~/images/logo-icon.png")" class="logo-icon" alt="logo icon" />
+                </div>
+                <div>
+                    <h4 class="logo-text">Real Estate</h4>
+                </div>
+                <div class="toggle-icon ms-auto">
+                    <i class='bx bx-arrow-back'></i>
                 </div>
             </div>
-        </div>
-       
-        <div class="header">
-            <div class="header-content">
-                <nav class="navbar navbar-expand">
-                    <div class="collapse navbar-collapse justify-content-between">
-                        <div class="header-left">
+            <!--navigation-->
+            <ul class="metismenu" id="menu">
+                <li>
+                    <a href="@Url.Action("Index","Home")">
+                        <div class="parent-icon">
+                            <i class='bx bx-home-alt'></i>
                         </div>
-                        <ul class="navbar-nav header-right">
-                            <li class="nav-item dropdown notification_dropdown">
-                                <a class="nav-link bell dz-theme-mode" href="javascript:void(0);">
-                                    <i id="icon-light" class="fas fa-sun"></i>
-                                    <i id="icon-dark" class="fas fa-moon"></i>
+                        <div class="menu-title">Dashboard</div>
+                    </a>
+                </li>
+                <li class="menu-label">Masters</li>
+                <li>
+                    <a asp-controller="Account"
+                       asp-action="Register"
+                       class="d-flex align-items-center word-wrap-menu @(currentController == "Account" && currentAction == "Register" ? "active-sub" : "")">
+                        <i class="fadeIn animated bx bx-user me-2"></i>
+                        <span>User Master</span>
+                    </a>
 
+                </li>
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon">
+                            <i class='bx bx-cart'></i>
+                        </div>
+                        <div class="menu-title">Master</div>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="@Url.Action("Index","PropertyTypeMaster")">
+                                <i class='bx bx-home-alt'></i> Property Type
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index","BuildingTypeMaster")">
+                                <i class='bx bx-building'></i> Building Type
+                            </a>
+                        </li>
+                    </ul>
+
+                </li>
+            </ul>
+            <!--end navigation-->
+        </div>
+        <!--end sidebar wrapper -->
+        <!--start header -->
+        <header>
+            <div class="topbar d-flex align-items-center">
+                <nav class="navbar navbar-expand gap-3">
+                    <div class="mobile-toggle-menu">
+                        <i class='bx bx-menu'></i>
+                    </div>
+                    <div class="top-menu ms-auto">
+                        <ul class="navbar-nav align-items-center gap-1">
+
+                            <li class="nav-item dark-mode d-none d-sm-flex">
+                                <a class="nav-link dark-mode-icon" href="javascript:;">
+                                    <i class='bx bx-moon'></i>
                                 </a>
                             </li>
-                            <li class="nav-item dropdown header-profile">
-                                <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
 
-                                    @using Microsoft.AspNetCore.Identity
-                                    @using RealEstate.Core.Identity
-
-                                    @inject UserManager<ApplicationUser> UserManager
-                                    @inject SignInManager<ApplicationUser> SignInManager
-                                    @{
-                                        var currentUser = await UserManager.GetUserAsync(User);
-                                        var roles = currentUser != null
-                                        ? await UserManager.GetRolesAsync(currentUser)
-                                        : new List<string>();
-                                    }
-
-                                    @if (currentUser != null)
-                                    {
-                                        <div class="header-info me-3">
-                                            <small class="text-end fs-14 font-w400">@currentUser.Email</small>
-                                            <small class="text-end text-primary fs-14 font-w500">@roles.FirstOrDefault()</small>
-                                        </div>
-                                    }
-
-
-                                    <img src="@Url.Content("~/images/profile/pic1.jpg")" width="20" alt="">
+                        </ul>
+                    </div>
+                    <div class="user-box dropdown px-3">
+                        <a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret"
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="@Url.Content("~/images/avatars/avatar.png")"
+                                 class="user-img" alt="user avatar" />
+                            <div class="user-info">
+                                <p class="user-name mb-0">@User.Identity.Name</p>
+                                <p class="designation mb-0">@roles.FirstOrDefault()</p>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Index","Home")">
+                                    <i class="bx bx-user fs-5"></i><span>Profile</span>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    @* <a href="@Url.Action("Index","Home")" class="dropdown-item ai-icon">
-                                        <svg id="icon-user1" xmlns="http://www.w3.org/2000/svg" class="text-primary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                        <span class="ms-2">Profile </span>
-                                    </a> *@
-                                    <a asp-controller="Account" asp-action="ChangePassword" class="dropdown-item ai-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="text-warning" width="18" height="18"
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M3 11l2-2a4 4 0 0 1 6 0l2 2"></path>
-                                            <path d="M7 11v4"></path>
-                                            <path d="M17 11v4"></path>
-                                            <rect x="5" y="15" width="14" height="5" rx="1" ry="1"></rect>
-                                        </svg>
-                                        <span class="ms-2">Change Password</span>
-                                    </a>
-                                    <form asp-controller="Account" asp-action="LogOff" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="dropdown-item ai-icon border-0 bg-transparent">
-                                            <svg id="icon-logout" xmlns="http://www.w3.org/2000/svg" class="text-danger" width="18" height="18"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                                <polyline points="16 17 21 12 16 7"></polyline>
-                                                <line x1="21" y1="12" x2="9" y2="12"></line>
-                                            </svg>
-                                            <span class="ms-2">Logout</span>
-                                        </button>
-                                    </form>
-
-                                </div>
                             </li>
-                            <li class="nav-item">
+                            <li>
+                                <a asp-controller="Account" asp-action="ChangePassword"
+                                   class="dropdown-item d-flex align-items-center">
+                                    <i class='bx bx-lock-alt fs-5 text-dark'></i>
+                                    <span>Change Password</span>
+                                </a>
+                            </li>
 
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Index","Home")">
+                                    <i class="bx bx-home-circle fs-5"></i><span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li><div class="dropdown-divider mb-0"></div></li>
+                            <li>
+                                <form asp-controller="Account" asp-action="LogOff" method="post" class="d-inline w-100">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item d-flex align-items-center border-0 bg-transparent w-100">
+                                        <i class='bx bx-log-out-circle'></i>
+                                        <span class="ms-2">Logout</span>
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </div>
                 </nav>
             </div>
-        </div>
-        <div class="deznav">
-            <div class="deznav-scroll">
-                <ul class="metismenu" id="menu">
-                    <li>
-                        <a href="@Url.Action("Index","Home")" >
-                            <i class="flaticon-025-dashboard"></i>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                        
-                    </li>
-
-                    <li>
-                        <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
-                            <i class="flaticon-025-dashboard"></i>
-                            <span class="nav-text">Master</span>
-                        </a>
-                        <ul aria-expanded="false">
-                            <li>
-                                <a asp-controller="Account"
-                                   asp-action="Register"
-                                   class="word-wrap-menu @(currentController == "Account" && currentAction == "Register" ? "active-sub" : "")">
-                                    User Master
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">Dashboard Dark</a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <a class="has-arrow " href="javascript:void()" aria-expanded="false">
-                            <i class="flaticon-050-info"></i>
-                            <span class="nav-text">Apps</span>
-                        </a>
-                        <ul aria-expanded="false">
-                            <li><a href="#">Profile</a></li>
-                            <li><a href="#">Post Details</a></li>
-                            <li>
-                                <a class="has-arrow" href="javascript:void()" aria-expanded="false">Email</a>
-                                <ul aria-expanded="false">
-                                    <li><a href="#">Compose</a></li>
-                                    <li><a href="#">Inbox</a></li>
-                                    <li><a href="#">Read</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a class="has-arrow" href="javascript:void()" aria-expanded="false">Shop</a>
-                                <ul aria-expanded="false">
-                                    <li><a href="#">Product Grid</a></li>
-                                    <li><a href="#">Product List</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+        </header>
+        <!--end header -->
+        <div class="page-wrapper">
+            <div class="page-content">
+                @RenderBody();
             </div>
         </div>
-        <div class="content-body">
-            @RenderBody()
-        </div>
-        <div class="footer">
-            <div class="copyright">
-                <p>Copyright © Designed &amp; Developed by <a href="https://websmithsolution.com/" target="_blank">Websmith Solutions</a> 2023</p>
+        <!--start overlay-->
+        <div class="overlay toggle-icon"></div>
+        <!--end overlay-->
+        <!--Start Back To Top Button--> <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+        <!--End Back To Top Button-->
+        <footer class="page-footer">
+            <p class="mb-0">Copyright © 2023. All right reserved.</p>
+        </footer>
+    </div>
+    <!--end wrapper-->
+    <!-- search modal -->
+    <div class="modal" id="SearchModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-md-down">
+            <div class="modal-content">
+                <div class="modal-header gap-2">
+                    <div class="position-relative popup-search w-100">
+                        <input class="form-control form-control-lg ps-5 border border-3 border-primary" type="search" placeholder="Search">
+                        <span class="position-absolute top-50 search-show ms-3 translate-middle-y start-0 top-50 fs-4"><i class='bx bx-search'></i></span>
+                    </div>
+                    <button type="button" class="btn-close d-md-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="search-list">
+                        <p class="mb-1">Html Templates</p>
+                        <div class="list-group">
+                            <a href="javascript:;" class="list-group-item list-group-item-action active align-items-center d-flex gap-2 py-1"><i class='bx bxl-angular fs-4'></i>Best Html Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-vuejs fs-4'></i>Html5 Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-magento fs-4'></i>Responsive Html5 Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-shopify fs-4'></i>eCommerce Html Templates</a>
+                        </div>
+                        <p class="mb-1 mt-3">Web Designe Company</p>
+                        <div class="list-group">
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-windows fs-4'></i>Best Html Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-dropbox fs-4'></i>Html5 Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-opera fs-4'></i>Responsive Html5 Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-wordpress fs-4'></i>eCommerce Html Templates</a>
+                        </div>
+                        <p class="mb-1 mt-3">Software Development</p>
+                        <div class="list-group">
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-mailchimp fs-4'></i>Best Html Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-zoom fs-4'></i>Html5 Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-sass fs-4'></i>Responsive Html5 Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-vk fs-4'></i>eCommerce Html Templates</a>
+                        </div>
+                        <p class="mb-1 mt-3">Online Shoping Portals</p>
+                        <div class="list-group">
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-slack fs-4'></i>Best Html Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-skype fs-4'></i>Html5 Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-twitter fs-4'></i>Responsive Html5 Templates</a>
+                            <a href="javascript:;" class="list-group-item list-group-item-action align-items-center d-flex gap-2 py-1"><i class='bx bxl-vimeo fs-4'></i>eCommerce Html Templates</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div id="loader" class="loader-overlay">
-            <div class="loader"></div>
         </div>
     </div>
+    <!-- end search modal -->
+    <!--start switcher-->
+    <div class="switcher-wrapper">
+        <div class="switcher-btn">
+            <i class='bx bx-cog bx-spin'></i>
+        </div>
+        <div class="switcher-body">
+            <div class="d-flex align-items-center">
+                <h5 class="mb-0 text-uppercase">Theme Customizer</h5>
+                <button type="button" class="btn-close ms-auto close-switcher" aria-label="Close"></button>
+            </div>
+            <hr />
+            <h6 class="mb-0">Theme Styles</h6>
+            <hr />
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="lightmode" checked>
+                    <label class="form-check-label" for="lightmode">Light</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="darkmode">
+                    <label class="form-check-label" for="darkmode">Dark</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="semidark">
+                    <label class="form-check-label" for="semidark">Semi Dark</label>
+                </div>
+            </div>
+            <hr />
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="minimaltheme" name="flexRadioDefault">
+                <label class="form-check-label" for="minimaltheme">Minimal Theme</label>
+            </div>
+            <hr />
+            <h6 class="mb-0">Header Colors</h6>
+            <hr />
+            <div class="header-colors-indigators">
+                <div class="row row-cols-auto g-3">
+                    <div class="col">
+                        <div class="indigator headercolor1" id="headercolor1"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator headercolor2" id="headercolor2"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator headercolor3" id="headercolor3"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator headercolor4" id="headercolor4"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator headercolor5" id="headercolor5"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator headercolor6" id="headercolor6"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator headercolor7" id="headercolor7"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator headercolor8" id="headercolor8"></div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <h6 class="mb-0">Sidebar Colors</h6>
+            <hr />
+            <div class="header-colors-indigators">
+                <div class="row row-cols-auto g-3">
+                    <div class="col">
+                        <div class="indigator sidebarcolor1" id="sidebarcolor1"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator sidebarcolor2" id="sidebarcolor2"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator sidebarcolor3" id="sidebarcolor3"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator sidebarcolor4" id="sidebarcolor4"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator sidebarcolor5" id="sidebarcolor5"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator sidebarcolor6" id="sidebarcolor6"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator sidebarcolor7" id="sidebarcolor7"></div>
+                    </div>
+                    <div class="col">
+                        <div class="indigator sidebarcolor8" id="sidebarcolor8"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end switcher-->
+    <!-- Bootstrap JS -->
+    <script src="@Url.Content("~/js/ThemeJS/bootstrap.bundle.min.js")"></script>
+    <!-- plugins -->
+    <script src="@Url.Content("~/js/ThemeJS/jquery.min.js")"></script>
+    <script src="@Url.Content("~/plugins/simplebar/js/simplebar.min.js")"></script>
+    <script src="@Url.Content("~/plugins/metismenu/js/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/plugins/perfect-scrollbar/js/perfect-scrollbar.js")"></script>
 
-    <!-- Required vendors -->
-    <script src="@Url.Content("~/vendor/global/global.min.js")"></script>
-    <script src="@Url.Content("~/vendor/chart.js/Chart.bundle.min.js")"></script>
-    <script src="@Url.Content("~/vendor/jquery-nice-select/js/jquery.nice-select.min.js")"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Select2 JS-->
+    <script src="@Url.Content("~/js/ThemeJS/select2.min.js")"></script>
+    <script src="@Url.Content("~/plugins/select2/js/select2-custom.js")"></script>
 
-    <!-- Project script -->
-    <!-- Apex Chart -->
-    <script src="@Url.Content("~/vendor/apexchart/apexchart.js")"></script>
+    <script src="@Url.Content("~/plugins/vectormap/jquery-jvectormap-2.0.2.min.js")"></script>
+    <script src="@Url.Content("~/plugins/vectormap/jquery-jvectormap-world-mill-en.js")"></script>
+    <script src="@Url.Content("~/plugins/chartjs/js/chart.js")"></script>
+    <script src="@Url.Content("~/plugins/sparkline-charts/jquery.sparkline.min.js")"></script>
+    
+    <!-- app JS -->
+    <script src="@Url.Content("~/js/ThemeJS/app.js")"></script>
+    <script src="@Url.Content("~/js/Projectjs/CommonJS/CommonUtilities.js")"></script>
+    <script src="@Url.Content("~/js/Projectjs/CommonJS/Select2Helper.js")"></script>
 
-    <!-- Chart Peity plugin files -->
-    <script src="@Url.Content("~/vendor/peity/jquery.peity.min.js")"></script>
-
-    <!-- Dashboard 1 -->
-    <script src="@Url.Content("~/js/ThemeJS/dashboard/dashboard-1.js")"></script>
-
-    <!-- JS for Dotted Map -->
-    <script src="@Url.Content("~/vendor/dotted-map/js/contrib/jquery.smallipop-0.3.0.min.js")"></script>
-    <script src="@Url.Content("~/vendor/dotted-map/js/contrib/suntimes.js")"></script>
-    <script src="@Url.Content("~/vendor/dotted-map/js/contrib/color-0.4.1.js")"></script>
-
-    <script src="@Url.Content("~/vendor/dotted-map/js/world.js")"></script>
-    <script src="@Url.Content("~/vendor/dotted-map/js/smallimap.js")"></script>
-    <script src="@Url.Content("~/js/ThemeJS/dashboard/dotted-map-init.js")"></script>
-
-    <!-- Custom Scripts -->
-    <script src="@Url.Content("~/js/ThemeJS/custom.min.js")"></script>
-    <script src="@Url.Content("~/js/ThemeJS/deznav-init.js")"></script>
-    <script src="@Url.Content("~/js/ThemeJS/demo.js")"></script>
-    @* <script src="@Url.Content("~/js/ThemeJS/styleSwitcher.js")"></script> *@
-
-    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
-    <script src="@Url.Content("~/js/ThemeJS/plugins-init/datatables.init.js")"></script>
-    <!-- Toastr -->
-    <script src="@Url.Content("~/vendor/toastr/js/toastr.min.js")"></script>
-    <!-- All init script -->
-    <script src="@Url.Content("~/js/ThemeJS/plugins-init/toastr-init.js")"></script>
-    <script src="@Url.Content("~/js/ProjectJS/CommonJS/Select2Helper.js")"></script>
-    <script src="@Url.Content("~/js/ProjectJS/CommonJS/CommonUtilities.js")"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="@Url.Content("~/vendor/sweetalert2/dist/sweetalert2.min.js")"></script>
-    <script src="@Url.Content("~/js/ThemeJS/plugins-init/sweetalert.init.js")"></script>
+    @* <script src="@Url.Content("~/plugins/datatable/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatable/js/dataTables.bootstrap5.min.js")"></script> *@
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="@Url.Content("~/js/ThemeJS/index3.js")"></script>
     <script>
         // This runs server-side and outputs a correct absolute base URL like "https://localhost:44308/"
         window.baseURL = '@Url.Content("~/")';

@@ -55,24 +55,21 @@ window.handleResponse = function (response, onSuccess = null) {
         showToast(response.outmsg, 'error');
     }
 };
-function togglePasswordVisibility(inputId, iconId) {
-    const input = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
+function togglePassword(wrapperSelector) {
+    // Use event delegation for dynamic elements too
+    $(document).on('click', wrapperSelector + ' a', function (event) {
+        event.preventDefault();
+        const input = $(this).closest(wrapperSelector).find('input');
+        const icon = $(this).find('i');
 
-    const isPassword = input.type === "password";
-    input.type = isPassword ? "text" : "password";
-
-    icon.classList.toggle("ri-eye-line", !isPassword);
-    icon.classList.toggle("ri-eye-off-line", isPassword);
-}
-
-// Example usage
-function displayPassword() {
-    togglePasswordVisibility("Password", "toggleIcon");
-}
-
-function displayCPassword() {
-    togglePasswordVisibility("ConfirmPassword", "CtoggleIcon");
+        if (input.attr("type") === "password") {
+            input.attr('type', 'text');
+            icon.removeClass("bx-hide").addClass("bx-show");
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass("bx-show").addClass("bx-hide");
+        }
+    });
 }
 
 function clearValidationError(element) {

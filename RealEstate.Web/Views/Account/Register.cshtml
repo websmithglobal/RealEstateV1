@@ -43,7 +43,14 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="Role" class="form-label required">Role</label>
-                            <select id="Role" class="select2-modal form-control">
+                            @* <select id="Role" class=" form-select">
+                                <option value="">Select Role</option>
+                                @foreach (var r in Model)
+                                {
+                                    <option value="@r.Value">@r.Text</option>
+                                }
+                            </select> *@
+                            <select class="form-select" id="Role">
                                 <option value="">Select Role</option>
                                 @foreach (var r in Model)
                                 {
@@ -91,6 +98,7 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script src="@Url.Content("~/js/ProjectJS/Register.js")" asp-append-version="true"></script>
 }

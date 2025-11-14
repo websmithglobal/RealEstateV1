@@ -39,3 +39,25 @@ It allows administrators and agents to manage property listings, clients, docume
 
 This project follows the **Clean Architecture** (Onion Architecture) principles:
 
+# User Master Management
+
+## Overview
+This project provides a simple C# Data Transfer Object (DTO) for user registration/save operations, along with a corresponding postgresql Server database table schema. It includes validation attributes for input fields like name, email, phone, role, and password.
+
+## Features
+- **Validation**: Built-in checks for required fields, length, format (e.g., email, phone, password strength).
+- **Security**: Password is hashed before storage (implement hashing in your service layer).
+- **Database**: Auto-generated ID, timestamps, and GUID for user identification.
+
+## DTO: UserMasterSaveDTO
+Located in your C# project RealEstate.Application -> DTOs.
+
+Key Properties:
+- `UserIDP`: Primary Key (int?).
+- `FullName`: Required, 5-200 chars, letters/spaces only.
+- `Email`: Required, valid email format, 5-200 chars.
+- `PhoneNumber`: Required, 5-15 digits, starts with 1-9.
+- `Role`: Required string (e.g., "Admin", "User").
+- `Password`: Required, 6-20 chars with lowercase, uppercase, digit, special char.
+- `ConfirmPassword`: Matches `Password`.
+- `UserIDF`: Login User Id.

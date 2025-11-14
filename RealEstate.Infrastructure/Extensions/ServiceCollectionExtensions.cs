@@ -40,11 +40,15 @@ namespace RealEstate.Infrastructure.Extensions
             {
                 cfg.AddProfile<UserMappingProfile>();
                 cfg.AddProfile<TenantMappingProfile>();
+                cfg.AddProfile<PropertyTypeMasterMappingProfile>();
+                cfg.AddProfile<BuildingTypeMasterMappingProfile>();
             });
             // Resolve dependencies
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IUserMaster, UserMasterService>();
             services.AddScoped<ITenantMaster, TenantMasterService>();
+            services.AddScoped<IPropertyTypeMasterService, PropertyTypeMasterService>();
+            services.AddScoped<IBuildingTypeMasterService, BuildingTypeMasterService>();
             return services;
         }
     }

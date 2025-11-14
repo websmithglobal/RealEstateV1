@@ -204,8 +204,8 @@ namespace RealEstate.Web.Controllers
 
                 return new JsonResult(new
                 {
-                    success = result.Outval,
-                    message = result.Outmsg
+                    Outval = result.Outval,
+                    Outmsg = result.Outmsg
                 });
             }
             catch (Exception ex)
@@ -217,8 +217,8 @@ namespace RealEstate.Web.Controllers
 
                 return new JsonResult(new
                 {
-                    success = false,
-                    message = OperationMessages.Error + ex.Message
+                    Outval = 0,
+                    Outmsg = OperationMessages.Error + ex.Message
                 });
             }
         }

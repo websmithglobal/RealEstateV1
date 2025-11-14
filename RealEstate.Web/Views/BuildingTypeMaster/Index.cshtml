@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Building Type Master";
+}
+
+<div class="card mx-3">
+    <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">Building Type Master</h5>
+
+        <button onclick="openModal('add')" class="btn btn-sm btn-primary">
+            Add New Building Type
+        </button>
+    </div>
+
+    <div class="card-body">
+        <table id="dataTBL" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Building Type</th>
+                    <th>Property Type</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="buildingTypeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 id="buildingTypeModalLabel">Add Building Type</h5>
+                <button type="button" class="btn btn-sm btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="BuildingTypeIDP">
+
+                <div class="row">
+
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label required">Building Type Name</label>
+                        <input type="text" id="BuildingTypeName" class="form-control" maxlength="150">
+                        <span id="BuildingTypeNameError" class="text-danger form-error"></span>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label required">Select Property Type</label>
+                        <select id="PropertyTypeIDF" class="form-control select2-modal">
+                            <option value="">Select Property Type</option>
+                            @if (ViewBag.PropertyTypeDropdownList != null)
+                            {
+                                foreach (var item in ViewBag.PropertyTypeDropdownList)
+                                {
+                                    <option value="@item.PropertyTypeIDP">@item.PropertyTypeName</option>
+                                }
+                            }
+                        </select>
+                        <span id="PropertyTypeIDFError" class="text-danger form-error"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="BtnSave" onclick="save()" class="btn btn-sm btn-primary">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/ProjectJS/BuildingTypeMaster.js" asp-append-version="true"></script>
+}

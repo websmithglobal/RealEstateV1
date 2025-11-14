@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Property Type Master";
+}
+
+<div class="card mx-3">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <h5 class="card-title">Property Type Master</h5>
+
+            <button onclick="openModal('add')" class="btn btn-sm btn-primary">
+                Add New Property Type
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <table id="dataTBL" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Property Type</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="propertyTypeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 id="propertyTypeModalLabel">Add Property Type</h5>
+                <button type="button" class="btn btn-sm btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="PropertyTypeIDP">
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label required">Property Type Name</label>
+                        <input type="text" id="PropertyTypeName" class="form-control" maxlength="150" placeholder="Enter Property Type">
+                        <span id="PropertyTypeNameError" class="text-danger form-error"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="BtnSave" onclick="save()" class="btn btn-sm btn-primary">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/ProjectJS/PropertyTypeMaster.js" asp-append-version="true"></script>
+}

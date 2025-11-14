@@ -7,13 +7,13 @@
         <div class="d-flex justify-content-between align-items-center w-100">
             <h5 class="card-title">Users</h5>
 
-            <button onclick="OpenModal('add')" class="btn btn-sm btn-primary">
+            <button onclick="openModal('add')" class="btn btn-sm btn-primary">
                 Add New User
             </button>
         </div>
     </div>
     <div class="card-body">
-        <table id="dataTbl" class="table table-bordered table-striped">
+        <table id="dataTBL" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>#</th>
@@ -55,38 +55,38 @@
                         <div class="col-md-6 mb-3">
                             <label for="FullName" class="form-label required">Full Name</label>
                             <input type="text" id="FullName" class="form-control" placeholder="Enter Full Name" maxlength="200" onkeypress="allowAlphabet(event,true)" />
-                            <span id="FullNameError" class="text-danger"></span>
+                            <span id="FullNameError" class="text-danger form-error"></span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="Email" class="form-label required">Email</label>
                             <input type="text" id="Email" class="form-control" placeholder="Enter Email" maxlength="200"/>
-                            <span id="EmailError" class="text-danger"></span>
+                            <span id="EmailError" class="text-danger form-error"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="PhoneNumber" class="form-label required">Mobile Number</label>
                             <input type="text" id="PhoneNumber" class="form-control" placeholder="Enter Phone Number" maxlength="15" onkeypress="allowNumeric(event,false)" />
-                            <span id="PhoneNumberError" class="text-danger"></span>
+                            <span id="PhoneNumberError" class="text-danger form-error"></span>
                         </div>
                     </div>
                     <div class="row" id="passwordFields">
                         <div class="col-md-6 mb-3">
                             <label for="Password" class="form-label required">Password</label>
                             <input type="password" id="Password" class="form-control" placeholder="Enter Password" maxlength="20"/>
-                            <span id="PasswordError" class="text-danger"></span>
+                            <span id="PasswordError" class="text-danger form-error"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="ConfirmPassword" class="form-label required">Confirm Password</label>
                             <input type="password" id="ConfirmPassword" class="form-control" placeholder="Confirm Password" maxlength="20" />
-                            <span id="ConfirmPasswordError" class="text-danger"></span>
+                            <span id="ConfirmPasswordError" class="text-danger form-error"></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" id="BtnSaveUser" onclick="Save()" class="btn btn-sm btn-primary">Save</button>
+                <button type="button" id="BtnSaveUser" onclick="save()" class="btn btn-sm btn-primary">Save</button>
             </div>
         </div>
     </div>

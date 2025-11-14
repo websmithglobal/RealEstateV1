@@ -1,12 +1,12 @@
 ﻿
 $(document).ready(function () {
-    GetDataWithPaging();
+    getData();
     $('#userModal').on('shown.bs.modal', function () {
         Select2Helper('userModal');
     });
 });
 
-function OpenModal(type) {
+function openModal(type) {
     ClearData();
     if (type === 'add') {
         $("#userModalLabel").text("Add New User");
@@ -165,7 +165,7 @@ function validate() {
     return isValid;
 }
 
-function Save() {
+function save() {
     const isValid = validate();
     if (!isValid) return;
 
@@ -193,30 +193,47 @@ function Save() {
         type: "POST",
         data: model,
         success: function (res) {
-            $(".text-danger").text("");
 
-            if (res.outval === 0 && res.fieldErrors) {
-                for (const [key, message] of Object.entries(res.fieldErrors)) {
-                    const spanId = `#${key}Error`;
-                    $(spanId).text(message);
-                }
-                showToast(res.outmsg || "Please correct the highlighted errors.", "warning");
-                return;
+            const { outval, outmsg, fieldErrors } = res;
+
+            // CASE 1: Success
+            if (outval == 1) {
+                showToast(outmsg, "success");
+                $("#userModal").modal("hide");
+                getData();
             }
 
-            switch (res.outval) {
-                case 1:
-                    showToast(res.outmsg || "User saved successfully.", "success");
-                    $("#userModal").modal("hide");
-                    GetDataWithPaging();
-                    ClearData();
-                    break;
-                case 99:
-                    showToast(res.outmsg || "Email or phone number already exists.", "warning");
-                    break;
-                default:
-                    showToast(res.outmsg || "User save failed.", "error");
-                    break;
+            // CASE 2: Business validation (duplicate, etc.)
+            else if (outval == 99) {
+                showToast(outmsg, "warning");
+            }
+
+            // CASE 3: ModelState validation errors
+            else if (fieldErrors && Object.keys(fieldErrors).length > 0) {
+
+                showToast("Please correct the highlighted errors.", "warning");
+
+                // Clear all previous error messages
+                $(".form-error").text("");
+
+                // Display each validation error in its matching span
+                for (const [fieldName, errorMsg] of Object.entries(fieldErrors)) {
+
+                    // Example: PropertyTypeName → #PropertyTypeNameError
+                    const errorSpan = $("#" + fieldName + "Error");
+
+                    if (errorSpan.length) {
+                        errorSpan.text(errorMsg);
+                    }
+
+                    console.log(`${fieldName}: ${errorMsg}`);
+                }
+            }
+
+            // CASE 4: Unexpected / unknown error
+            else {
+                showToast("Unable to process your request. Please try again.", "error");
+                console.error("Error:", res);
             }
         },
         error: function (xhr) {
@@ -254,9 +271,9 @@ function edit(id) {
     });
 }
 
-function GetDataWithPaging() {
-    if (!$.fn.DataTable.isDataTable('#dataTbl')) {
-        $('#dataTbl').DataTable({
+function getData() {
+    if (!$.fn.DataTable.isDataTable('#dataTBL')) {
+        $('#dataTBL').DataTable({
             "processing": true,
             "serverSide": true,
             "ordering": false,
@@ -287,7 +304,7 @@ function GetDataWithPaging() {
                     "render": function (data, type, row) {
                         return `
                             <button class="btn btn-sm ${data ? 'btn-success' : 'btn-danger'}"
-                                    onclick="GeneralAction(${row.userIDP}, 2)">
+                                    onclick="generalAction(${row.userIDP}, 2)">
                                 ${data ? "Active" : "Inactive"}
                             </button>
                         `;
@@ -305,7 +322,7 @@ function GetDataWithPaging() {
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-sm"
-                                    onclick="GeneralAction(${data}, 1)"
+                                    onclick="generalAction(${data}, 1)"
                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
                                 <i class="bi bi-trash"></i>
                             </button>
@@ -315,11 +332,11 @@ function GetDataWithPaging() {
             ]
         });
     } else {
-        $('#dataTbl').DataTable().ajax.reload();
+        $('#dataTBL').DataTable().ajax.reload();
     }
 }
 
-function GeneralAction(id, actionType) {
+function generalAction(id, actionType) {
     let title = 'Are you sure?';
     let text = actionType === 1
         ? "Do you really want to delete this user?"
@@ -337,10 +354,22 @@ function GeneralAction(id, actionType) {
                 type: "POST",
                 url: baseURL + "Register/GeneralAction",
                 data: { ID: id, ActionType: actionType }, // Note: keys match C# method parameters
-                success: function (mRes) {
-                    showToast(mRes.message || "Action completed successfully.", mRes.success ? "success" : "error");
-                    GetDataWithPaging();
+                success: function (res) {
+
+                    const { outval, outmsg } = res;
+
+                    // CASE 1: Success
+                    if (outval === 1) {
+                        showToast(outmsg, "success");
+                        getData();
+                    }
+                    // CASE 2: Failure / error
+                    else {
+                        showToast("Unable to process your request. Please try again.", "error");
+                        console.error("Error:", res);
+                    }
                 },
+
                 error: function (xhr) {
                     const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : "An error occurred.";
                     showToast(errorMsg, "error");
@@ -358,5 +387,5 @@ function ClearData() {
     $("#Role").val('').trigger('change'); 
     $("#Password").val('');
     $("#ConfirmPassword").val('');
-    $("#FullNameError, #EmailError, #PhoneNumberError, #RoleError, #PasswordError, #ConfirmPasswordError").text('');
+    $(".form-error").text('');
 }
